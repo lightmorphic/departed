@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1 class="title">Dead man's switch</h1>
+<p class="lede">Every {{ interval_days|round(2)|string|replace('.0','') }} days you get a check-in email. Click it and the clock resets. Ignore it and, after {{ cfg.reminder_count }} daily reminders, the encrypted archive goes to <strong>{{ cfg.recipient_email or 'nobody - not set' }}</strong>.</p>
+
+{% if cfg.problems %}
+<section class="panel notice warning" aria-labelledby="cfg-h">
+  <h2 id="cfg-h" class="panel-h">! Settings need attention</h2>
+  <p>Nothing will be sent until these are fixed in <code>.env</code>:</p>
+  <ul>{% for p in cfg.problems %}<li>{{ p }}</li>{% endfor %}</ul>
+</section>
+{% endif %}
+
+<div class="grid">
+<section class="panel status" aria-labelledby="status-h">
+  <h2 id="status-h" class="panel-h">Status</h2>
+  <p class="state state-{{ s.state }}{% if s.fire_pending %} state-firing{% endif %}"><span class="mark" aria-hidden="true">{{ mark }}</span> {{ word }}</p>
+  <p class="blurb">{{ blurb }}</p>
+  <dl class="facts">
+    <div><dt>Last check-in</dt><dd>{{ fmt(s.last_checkin_at) }}</dd></div>
+    {% if s.state == 'waiting' %}
+    <div><dt>Next check-in email</dt><dd>{{ fmt(next_email) }}</dd></div>
+    {% elif s.state == 'reminding' %}
+    <div><dt>Check-in email sent</dt><dd>{{ fmt(s.cycle_started_at) }}</dd></div>
+    <div><dt>Reminders sent</dt><dd>{{ s.reminders_sent }} of {{ cfg.reminder_count }}</dd></div>
+    {% if not s.fire_pending %}<div><dt>Next reminder</dt><dd>{{ fmt(next_email) }}</dd></div>{% endif %}
+    {% elif s.state == 'fired' %}
+    <div><dt>Fired</dt><dd>{{ fmt(s.fired_at) }}</dd></div>
+    {% endif %}
+    {% if s.state != 'fired' %}
+    <div><dt>Would fire around</dt><dd>{{ fmt(fire_at) }}</dd></div>
+    {% endif %}
+    {% if s.fire_pending and s.last_fire_error %}
+    <div><dt>Last problem</dt><dd>{{ s.last_fire_error }} ({{ s.fire_attempts }} attempt{{ 's' if s.fire_attempts != 1 }})</dd></div>
+    {% endif %}
+  </dl>
+  <form method="post" action="/checkin" class="actions">
+    <button class="btn primary" type="submit">Check in now</button>
+    {% if done == 'checkin' %}<span class="note" role="status">✓ Checked in. Clock reset.</span>{% endif %}
+  </form>
+</section>
+
+<section class="panel" aria-labelledby="arc-h">
+  <h2 id="arc-h" class="panel-h">Archive folder</h2>
+  {% if not archive.exists %}
+  <p class="tint danger">! The archive folder is not mounted. Check <code>ARCHIVE_DIR</code> in <code>.env</code>.</p>
+  {% elif archive.count == 0 %}
+  <p class="tint warning">! The folder is empty. The switch will not fire while it is empty; it will email you an alert instead.</p>
+  {% else %}
+  <p class="tint success">✓ {{ archive.count }} file{{ 's' if archive.count != 1 }}, {{ size(archive.total_size) }} in total.{% if archive.count > 1 %} They will be zipped when sent.{% endif %}</p>
+  <p class="hint">Last changed {{ fmt(archive.last_modified) }}</p>
+  {% if big_attachment %}<p class="tint warning">! Over 20 MB. Many mail servers refuse attachments this large. Send a test to be sure.</p>{% endif %}
+  <ul class="files">
+    {% for f in archive.files[:12] %}<li><span>{{ f.name }}</span><span class="hint">{{ size(f.size) }}</span></li>{% endfor %}
+    {% if archive.count > 12 %}<li class="hint">and {{ archive.count - 12 }} more</li>{% endif %}
+  </ul>
+  {% endif %}
+  <form method="post" action="/test-email" class="actions">
+    <button class="btn" type="submit">Send a test email</button>
+  </form>
+  {% if s.last_test_result %}
+  <p class="note {% if s.last_test_result.startswith('Sent') %}ok{% else %}bad{% endif %}" role="status">{{ '✓' if s.last_test_result.startswith('Sent') else '!' }} {{ s.last_test_result }}<br><span class="hint">{{ fmt(s.last_test_at) }}</span></p>
+  {% endif %}
+  <p class="hint">The test mails the archive to you, not the recipient, so you can prove the whole path works without firing the switch.</p>
+</section>
+</div>
+
+<section class="panel" aria-labelledby="log-h">
+  <h2 id="log-h" class="panel-h">Recent events</h2>
+  {% if events %}
+  <table class="log">
+    <caption class="sr-only">Check-ins, reminders and other events, newest first</caption>
+    <thead><tr><th scope="col">When</th><th scope="col">What</th></tr></thead>
+    <tbody>
+    {% for e in events %}
+    <tr class="ev-{{ e.kind }}"><td>{{ fmt(e.at) }}</td><td>{{ e.message }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}<p class="hint">Nothing yet.</p>{% endif %}
+</section>
+{% endblock %}

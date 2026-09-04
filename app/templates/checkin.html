@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block title %}{{ 'Checked in' if ok else 'Link not valid' }} - Departed{% endblock %}
+{% block content %}
+<section class="panel confirm">
+  {% if ok %}
+  <p class="state state-waiting"><span class="mark" aria-hidden="true">✓</span> Check-in received</p>
+  <p>Thank you. The clock has been reset. The next check-in email is due {{ next_due }}.</p>
+  <p class="hint">A confirmation has been emailed to you as well.</p>
+  {% else %}
+  <p class="state state-fired"><span class="mark" aria-hidden="true">!</span> This link is no longer valid</p>
+  <p>It has already been used, or a newer check-in email has replaced it. Use the link in the most recent email, or the button on the <a href="/">dashboard</a>.</p>
+  {% endif %}
+</section>
+{% endblock %}

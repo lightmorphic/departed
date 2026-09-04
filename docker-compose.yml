@@ -1,0 +1,26 @@
+# Nothing to edit here. Every setting comes from .env (copy .env.example).
+services:
+  departed:
+    image: ghcr.io/lightmorphic/departed:latest
+    build: .
+    container_name: departed
+    restart: unless-stopped
+    ports:
+      - "${DEPARTED_PORT:-4160}:8080"
+    volumes:
+      - ${DEPARTED_DATA:-/opt/departed}/data:/data
+      - ${ARCHIVE_DIR:-/opt/departed/archive}:/archive:ro
+    environment:
+      OWNER_EMAIL: ${OWNER_EMAIL}
+      RECIPIENT_EMAIL: ${RECIPIENT_EMAIL}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      SMTP_FROM: ${SMTP_FROM}
+      SMTP_SECURITY: ${SMTP_SECURITY:-starttls}
+      BASE_URL: ${BASE_URL}
+      CHECKIN_INTERVAL_DAYS: ${CHECKIN_INTERVAL_DAYS:-10}
+      REMINDER_COUNT: ${REMINDER_COUNT:-10}
+      REMINDER_INTERVAL_DAYS: ${REMINDER_INTERVAL_DAYS:-1}
+      TZ: ${TZ:-Europe/London}
