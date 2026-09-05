@@ -1,12 +1,13 @@
 {% extends "layout.html" %}
+{% set nav = 'home' %}
 {% block content %}
-<h1 class="title">Dead man's switch</h1>
-<p class="lede">Every {{ interval_days|round(2)|string|replace('.0','') }} days you get a check-in email. Click it and the clock resets. Ignore it and, after {{ cfg.reminder_count }} daily reminders, the encrypted archive goes to <strong>{{ cfg.recipient_email or 'nobody - not set' }}</strong>.</p>
+<h1 class="title">Your switch</h1>
+<p class="lede">Every {{ interval_days|round(2)|string|replace('.0','') }} days you get a check-in email. Click it and the clock resets. Ignore it and, after {{ cfg.reminder_count }} daily reminders, your files go to <strong>{{ cfg.recipient_email or 'nobody yet' }}</strong>.</p>
 
 {% if cfg.problems %}
 <section class="panel notice warning" aria-labelledby="cfg-h">
-  <h2 id="cfg-h" class="panel-h">! Settings need attention</h2>
-  <p>Nothing will be sent until these are fixed in <code>.env</code>:</p>
+  <h2 id="cfg-h" class="panel-h">! Not finished yet</h2>
+  <p>Nothing will be sent until these are sorted out on the <a href="/settings">settings page</a>:</p>
   <ul>{% for p in cfg.problems %}<li>{{ p }}</li>{% endfor %}</ul>
 </section>
 {% endif %}
@@ -41,27 +42,27 @@
 </section>
 
 <section class="panel" aria-labelledby="arc-h">
-  <h2 id="arc-h" class="panel-h">Archive folder</h2>
-  {% if not archive.exists %}
-  <p class="tint danger">! The archive folder is not mounted. Check <code>ARCHIVE_DIR</code> in <code>.env</code>.</p>
-  {% elif archive.count == 0 %}
-  <p class="tint warning">! The folder is empty. The switch will not fire while it is empty; it will email you an alert instead.</p>
+  <h2 id="arc-h" class="panel-h">What will be sent</h2>
+  {% if archive.count == 0 %}
+  <p class="tint warning">! Nothing to send yet. The switch will not fire while there is nothing there; it will email you an alert instead.</p>
+  <p><a href="/settings#files">Add your files</a></p>
   {% else %}
   <p class="tint success">✓ {{ archive.count }} file{{ 's' if archive.count != 1 }}, {{ size(archive.total_size) }} in total.{% if archive.count > 1 %} They will be zipped when sent.{% endif %}</p>
   <p class="hint">Last changed {{ fmt(archive.last_modified) }}</p>
   {% if big_attachment %}<p class="tint warning">! Over 20 MB. Many mail servers refuse attachments this large. Send a test to be sure.</p>{% endif %}
   <ul class="files">
-    {% for f in archive.files[:12] %}<li><span>{{ f.name }}</span><span class="hint">{{ size(f.size) }}</span></li>{% endfor %}
-    {% if archive.count > 12 %}<li class="hint">and {{ archive.count - 12 }} more</li>{% endif %}
+    {% for f in archive.files[:8] %}<li><span>{{ f.name }}</span><span class="hint">{{ size(f.size) }}</span></li>{% endfor %}
+    {% if archive.count > 8 %}<li class="hint">and {{ archive.count - 8 }} more</li>{% endif %}
   </ul>
   {% endif %}
+  {% if cfg.letter %}<p class="hint">Your letter goes with them.</p>{% endif %}
   <form method="post" action="/test-email" class="actions">
     <button class="btn" type="submit">Send a test email</button>
   </form>
   {% if s.last_test_result %}
   <p class="note {% if s.last_test_result.startswith('Sent') %}ok{% else %}bad{% endif %}" role="status">{{ '✓' if s.last_test_result.startswith('Sent') else '!' }} {{ s.last_test_result }}<br><span class="hint">{{ fmt(s.last_test_at) }}</span></p>
   {% endif %}
-  <p class="hint">The test mails the archive to you, not the recipient, so you can prove the whole path works without firing the switch.</p>
+  <p class="hint">The test mails everything to you, not to your person, so you can prove the whole path works without firing the switch.</p>
 </section>
 </div>
 

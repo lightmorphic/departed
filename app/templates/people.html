@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+{% set nav = 'people' %}
+{% block title %}People - Departed{% endblock %}
+{% block content %}
+<h1 class="title">People</h1>
+<p class="lede">Everyone here has their own switch: their own settings, their own files, their own timer. Nobody can see anybody else's.</p>
+
+{% if error %}<p class="tint danger" role="alert">! {{ error }}</p>{% endif %}
+{% if done %}<p class="tint success" role="status">✓ {{ {'added':'Account made.','removed':'Account removed.'}.get(done, 'Done.') }}</p>{% endif %}
+
+<section class="panel" aria-labelledby="list-h">
+  <h2 id="list-h" class="panel-h">Accounts</h2>
+  <table class="log people">
+    <caption class="sr-only">Everyone with an account, and the state of their switch</caption>
+    <thead><tr><th scope="col">Name</th><th scope="col">Switch</th><th scope="col">Files</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead>
+    <tbody>
+    {% for row in rows %}
+    <tr>
+      <td>{{ row.user.username }}{% if row.user.is_admin %} <span class="pill">Admin</span>{% endif %}</td>
+      <td>{% if not row.ready %}Not set up{% else %}{{ row.state|capitalize }}{% endif %}</td>
+      <td>{{ row.files }}</td>
+      <td class="right">
+        {% if row.user.id != user.id %}
+        <form method="post" action="/people/delete" class="inline">
+          <input type="hidden" name="user_id" value="{{ row.user.id }}">
+          <button class="btn danger small" type="submit" data-confirm="Remove {{ row.user.username }} and everything they have stored?">Remove</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<section class="panel" aria-labelledby="add-h">
+  <h2 id="add-h" class="panel-h">Add somebody</h2>
+  <form method="post" action="/people">
+    <label class="field" for="username">Username</label>
+    <input id="username" name="username" type="text" required>
+    <label class="field" for="password">First password</label>
+    <input id="password" name="password" type="password" autocomplete="new-password" required minlength="10">
+    <label class="field" for="confirm">Password again</label>
+    <input id="confirm" name="confirm" type="password" autocomplete="new-password" required>
+    <p class="hint">Tell them the password, and tell them to change it on their settings page.</p>
+    <label class="switch">
+      <input type="checkbox" name="is_admin" role="switch">
+      <span class="track"></span>
+      <span>Let them add and remove other people</span>
+    </label>
+    <div class="actions"><button class="btn primary" type="submit">Make the account</button></div>
+  </form>
+</section>
+{% endblock %}

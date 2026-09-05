@@ -3,7 +3,9 @@ from datetime import datetime, timedelta, timezone
 import pytest
 
 from app import create_app
-from app.config import Config
+from app.config import Boot
+
+PASSWORD = "a-long-enough-password"
 
 
 class Clock:
@@ -18,53 +20,87 @@ class Clock:
 
 
 class FakeMailer:
-    def __init__(self):
-        self.sent = []
-        self.fail = False
+    """Stands in for the real one. Every account shares this, as they share a server."""
+
+    sent = []
+    fail = False
+
+    def __init__(self, settings=None):
+        self._settings = settings
 
     def send(self, to, subject, body, attachment=None):
-        if self.fail:
+        if FakeMailer.fail:
             raise ConnectionError("smtp down")
-        self.sent.append({"to": to, "subject": subject, "body": body, "attachment": attachment})
+        FakeMailer.sent.append({"to": to, "subject": subject, "body": body, "attachment": attachment})
 
-    def last(self):
-        return self.sent[-1]
+    @classmethod
+    def reset(cls):
+        cls.sent = []
+        cls.fail = False
 
-    def link(self):
-        """Token from the most recent check-in style email."""
-        for m in reversed(self.sent):
+    @classmethod
+    def last(cls):
+        return cls.sent[-1]
+
+    @classmethod
+    def link(cls):
+        for m in reversed(cls.sent):
             for word in m["body"].split():
                 if "/checkin/" in word:
                     return word.rsplit("/", 1)[1]
         return None
 
 
+SETTINGS = {
+    "owner_email": "me@example.com",
+    "recipient_email": "them@example.com",
+    "smtp_host": "smtp.example.com",
+    "smtp_from": "me@example.com",
+    "base_url": "http://departed.test",
+    "checkin_interval_days": "10",
+    "reminder_count": "3",
+    "reminder_interval_days": "1",
+    "timezone": "Europe/London",
+}
+
+
 @pytest.fixture
-def env(tmp_path, monkeypatch):
-    monkeypatch.setenv("OWNER_EMAIL", "me@example.com")
-    monkeypatch.setenv("RECIPIENT_EMAIL", "them@example.com")
-    monkeypatch.setenv("SMTP_HOST", "smtp.example.com")
-    monkeypatch.setenv("SMTP_FROM", "me@example.com")
-    monkeypatch.setenv("BASE_URL", "http://departed.test")
-    monkeypatch.setenv("DASHBOARD_PASSWORD", "open-sesame-please")
+def world(tmp_path, monkeypatch):
     monkeypatch.setenv("DEPARTED_DATA_DIR", str(tmp_path / "data"))
-    monkeypatch.setenv("DEPARTED_ARCHIVE_DIR", str(tmp_path / "archive"))
-    monkeypatch.setenv("CHECKIN_INTERVAL_DAYS", "10")
-    monkeypatch.setenv("REMINDER_COUNT", "3")
-    monkeypatch.setenv("REMINDER_INTERVAL_DAYS", "1")
-    (tmp_path / "archive").mkdir()
-    return tmp_path
+    FakeMailer.reset()
+    clock = Clock()
+    app = create_app(Boot(), mailer_factory=FakeMailer, now=clock)
+    app.testing = True
+    switches = app.extensions["departed"]
+
+    def make(username, password=PASSWORD, admin=True, settings=SETTINGS):
+        from app.store import hash_password
+        digest, salt = hash_password(password)
+        user_id = switches.db.add_user(username, digest, salt, admin)
+        if settings:
+            switches.store(user_id).set_many(settings)
+        return user_id
+
+    def client_for(username, password=PASSWORD):
+        c = app.test_client()
+        c.post("/login", data={"username": username, "password": password})
+        return c
+
+    user_id = make("charlie")
+    client = client_for("charlie")
+
+    return type("W", (), {
+        "app": app, "switches": switches, "db": switches.db,
+        "client": client, "anon": app.test_client(),
+        "engine": switches.engine(user_id), "user_id": user_id,
+        "clock": clock, "mailer": FakeMailer, "password": PASSWORD,
+        "archive": switches.archive_dir(user_id),
+        "make": staticmethod(make), "client_for": staticmethod(client_for),
+        "tick": staticmethod(switches.tick_all),
+    })
 
 
 @pytest.fixture
-def world(env):
-    clock = Clock()
-    mailer = FakeMailer()
-    app = create_app(Config(), mailer=mailer, now=clock)
-    app.testing = True
-    engine = app.extensions["departed"]
-    client = app.test_client()
-    client.post("/login", data={"password": "open-sesame-please"})
-    return type("W", (), {"app": app, "client": client, "engine": engine,
-                          "clock": clock, "mailer": mailer, "archive": env / "archive",
-                          "anon": app.test_client(), "password": "open-sesame-please"})
+def files(world):
+    world.archive.mkdir(parents=True, exist_ok=True)
+    return world.archive
