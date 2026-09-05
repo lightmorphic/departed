@@ -12,6 +12,11 @@ You encrypt the files yourself, outside the app, and add them on the settings pa
 
 Several people can share one copy. Each has their own account, their own settings, their own files and their own timer, and nobody can see anybody else's.
 
+<picture>
+  <source srcset="docs/images/app-dark.png" media="(prefers-color-scheme: dark)">
+  <img src="docs/images/app-light.png" alt="The Departed dashboard, showing the switch waiting, the dates of the next check-in and the firing, and the files that would be sent." width="900">
+</picture>
+
 ## Run it
 
 You need Docker. There are no settings in the compose file: everything is set in the browser afterwards.

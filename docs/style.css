@@ -273,7 +273,7 @@ a { color: inherit; }
 
 /* ── Shared rhythm ──────────────────────────────────────────────── */
 section { padding-inline: clamp(1.25rem, 4vw, 3rem); }
-.opening, .how, .sealed, .care, .home, .run { max-width: 74rem; margin-inline: auto; }
+.opening, .how, .sealed, .app, .care, .home, .run { max-width: 74rem; margin-inline: auto; }
 
 .reveal {
   opacity: 0; transform: translate3d(0, 1.25rem, 0);
@@ -484,3 +484,14 @@ section { padding-inline: clamp(1.25rem, 4vw, 3rem); }
 .doc code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .875em; background: var(--panel); padding: .1em .4em; border-radius: .35em; }
 .doc .lede-p { color: var(--fg); font-size: 1.125rem; }
 .notfound { text-align: left; }
+
+/* ── The app section ────────────────────────────────────────────── */
+.app { padding-block: clamp(3.5rem, 8vh, 5.5rem); }
+.shot { margin: 0 auto clamp(2.5rem, 6vh, 3.5rem); max-width: 54rem; }
+.shot img {
+  display: block; width: 100%; height: auto;
+  border: 1px solid var(--rule); border-radius: 1rem;
+  box-shadow: 0 24px 60px -30px rgba(0,0,0,.75);
+  background: var(--panel);
+}
+.shot figcaption { margin-top: .875rem; text-align: center; font-size: .8125rem; color: var(--muted-fg); }
