@@ -1,9 +1,3 @@
-# The whole of the server-side setup. Everything else, including your email
-# addresses, your mail server and your files, is set in the app itself.
-#
-#   4160        the port you open in a browser. Change it if it is taken.
-#   /opt/departed   the folder holding the database, your files and the log.
-#                   Back that folder up and you have everything.
 services:
   departed:
     image: ghcr.io/lightmorphic/departed:latest
