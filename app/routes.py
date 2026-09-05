@@ -1,11 +1,12 @@
 from flask import (Blueprint, abort, current_app, g, jsonify, make_response,
                    redirect, render_template, request, send_file)
 
-from . import archive
+from . import archive, emails
 from .auth import COOKIE, SESSION_DAYS
 from .config import VERSION
+from .mailer import in_plain_words
 from .engine import _hash
-from .store import SECURITY_CHOICES, hash_password, password_matches
+from .store import DEFAULTS, SECURITY_CHOICES, hash_password, password_matches
 
 bp = Blueprint("main", __name__)
 
@@ -269,6 +270,51 @@ def save_settings():
     store.set_many(form)
     g.engine.db.log_event(g.user.id, "settings", "Settings changed.")
     return redirect("/settings?done=saved")
+
+
+FIELD_NAMES = {
+    "owner_email": "your email address", "recipient_email": "your person's email address",
+    "smtp_host": "the mail server", "smtp_port": "the mail port",
+    "smtp_security": "the mail encryption", "smtp_username": "the mail username",
+    "smtp_password": "the mail password", "smtp_from": "the from-address",
+    "base_url": "the web address", "checkin_interval_days": "the days between check-ins",
+    "reminder_count": "the number of reminders", "reminder_interval_days": "the days between reminders",
+    "timezone": "the timezone", "letter": "your letter",
+}
+
+
+@bp.post("/settings/field")
+def save_field():
+    """One setting at a time, saved as you go."""
+    name = request.form.get("name", "")
+    if name not in DEFAULTS or name == "sealed":
+        return jsonify(ok=False, error="not a setting"), 400
+    value = request.form.get("value", "")
+    store = _switches().store(g.user.id)
+    if name == "smtp_password" and not value:
+        return jsonify(ok=True, unchanged=True)
+    if store.get(name) == value:
+        return jsonify(ok=True, unchanged=True)
+    store.set(name, value)
+    g.engine.db.log_event(g.user.id, "settings", f"Changed {FIELD_NAMES.get(name, name)}.")
+    return jsonify(ok=True)
+
+
+@bp.post("/settings/test-mail")
+def test_mail():
+    """Sends a short message to you, to prove the mail settings work. Nothing else."""
+    cfg = _switches().store(g.user.id).current()
+    if not cfg.smtp_host or not cfg.owner_email or not cfg.from_address:
+        return jsonify(ok=False, error="Fill in your email address, the mail server and the "
+                                       "from-address first.")
+    text, html = emails.mail_test(cfg, cfg.owner_email)
+    try:
+        g.engine.mailer.send(cfg.owner_email, "Departed: your mail settings work", text, html=html)
+    except Exception as e:  # noqa: BLE001
+        g.engine.db.log_event(g.user.id, "error", f"Mail settings test failed: {e}")
+        return jsonify(ok=False, error=in_plain_words(e))
+    g.engine.db.log_event(g.user.id, "test", f"Mail settings test sent to {cfg.owner_email}.")
+    return jsonify(ok=True, sent_to=cfg.owner_email)
 
 
 @bp.post("/settings/letter")

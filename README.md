@@ -55,6 +55,14 @@ Signed in, you set:
 - **Your letter.** A few words that go in the body of the email carrying your files. It is stored encrypted at rest but the app can read it, unlike your files, so keep anything private inside the locked files instead.
 - Your own sign-in password.
 
+Everything on that page saves itself as you go, with a tick beside the box. There is no save button. There is a **Send myself a test** button beside the mail settings, which sends one short message to you and nothing else, so you can prove that part works before trusting anything to it.
+
+### The emails
+
+Every message goes out twice in the same envelope: as plain words for anything that shows plain text, and as a small designed page for everything else. They carry no images, no fonts and nothing loaded from anywhere, so nothing about them can report that you opened one. The check-in is a button with the plain address underneath it.
+
+The one that reaches your person is the one that matters. Your letter sits at the top in its own block, then a short explanation of what happened, then how to open the file.
+
 ### Sealing files in your browser
 
 Choose your files on the settings page and press **Seal and save**. What happens next happens entirely in your browser:

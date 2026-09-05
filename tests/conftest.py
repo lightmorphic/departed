@@ -28,10 +28,11 @@ class FakeMailer:
     def __init__(self, settings=None):
         self._settings = settings
 
-    def send(self, to, subject, body, attachment=None):
+    def send(self, to, subject, body, attachment=None, html=None):
         if FakeMailer.fail:
             raise ConnectionError("smtp down")
-        FakeMailer.sent.append({"to": to, "subject": subject, "body": body, "attachment": attachment})
+        FakeMailer.sent.append({"to": to, "subject": subject, "body": body,
+                                "attachment": attachment, "html": html})
 
     @classmethod
     def reset(cls):

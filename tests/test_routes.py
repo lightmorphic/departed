@@ -163,3 +163,55 @@ def test_it_shows_what_a_check_in_link_will_look_like(world):
     store.set("base_url", "https://departed.example.com")
     assert store.current().example_checkin_url.startswith("https://departed.example.com/checkin/")
     assert "https://departed.example.com/checkin/" in world.client.get("/settings").get_data(as_text=True)
+
+
+def test_settings_save_one_field_at_a_time(world):
+    c = world.client
+    store = world.switches.store(world.user_id)
+    r = c.post("/settings/field", data={"name": "owner_email", "value": "new@example.com"})
+    assert r.get_json() == {"ok": True}
+    assert store.get("owner_email") == "new@example.com"
+
+    # saving the same value again changes nothing and says so
+    assert c.post("/settings/field", data={"name": "owner_email", "value": "new@example.com"}
+                  ).get_json()["unchanged"] is True
+
+    # an empty mail password means "leave it alone"
+    store.set("smtp_password", "hunter2222")
+    assert c.post("/settings/field", data={"name": "smtp_password", "value": ""}
+                  ).get_json()["unchanged"] is True
+    assert store.get("smtp_password") == "hunter2222"
+
+    # and nothing outside the known settings can be written
+    assert c.post("/settings/field", data={"name": "password_hash", "value": "x"}).status_code == 400
+    assert c.post("/settings/field", data={"name": "sealed", "value": "1"}).status_code == 400
+
+    assert world.anon.post("/settings/field", data={"name": "owner_email", "value": "x"}
+                           ).headers["Location"] == "/login"
+
+
+def test_the_mail_test_sends_only_to_you(world):
+    r = world.client.post("/settings/test-mail").get_json()
+    assert r["ok"] is True and r["sent_to"] == "me@example.com"
+    m = world.mailer.last()
+    assert m["to"] == "me@example.com"
+    assert m["attachment"] is None
+    assert "mail settings work" in m["subject"]
+    assert not any(x["to"] == "them@example.com" for x in world.mailer.sent)
+    assert world.db.get_state(world.user_id).state == "waiting"
+
+
+def test_the_mail_test_reports_a_failure_plainly(world):
+    world.mailer.fail = True
+    r = world.client.post("/settings/test-mail").get_json()
+    assert r["ok"] is False and "smtp down" in r["error"]
+    # and the jargon gets translated
+    import smtplib
+    from app.mailer import in_plain_words
+    assert "username and password" in in_plain_words(smtplib.SMTPAuthenticationError(535, b"nope"))
+    assert "could not be found" in in_plain_words(OSError("Name or service not known"))
+    assert "Nothing answered" in in_plain_words(ConnectionRefusedError(111, "Connection refused"))
+    assert "did not answer in time" in in_plain_words(TimeoutError("timed out"))
+    world.mailer.fail = False
+    world.switches.store(world.user_id).set("smtp_host", "")
+    assert "Fill in" in world.client.post("/settings/test-mail").get_json()["error"]

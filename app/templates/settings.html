@@ -3,7 +3,7 @@
 {% block title %}Settings - Departed{% endblock %}
 {% block content %}
 <h1 class="title">Settings</h1>
-<p class="lede">Everything lives here. Nothing needs editing on the server.</p>
+<p class="lede">Everything lives here, and everything saves itself as you go.</p>
 
 {% if error %}<p class="tint danger" role="alert">! {{ error }}</p>{% endif %}
 {% if done %}<p class="tint success" role="status">✓ {{ {'saved':'Settings saved.','letter':'Your letter was saved.','uploaded':'Files added.','deleted':'File removed.','password':'Your password was changed.'}.get(done, 'Done.') }}</p>{% endif %}
@@ -15,7 +15,7 @@
 </section>
 {% endif %}
 
-<form method="post" action="/settings">
+<form class="autosave" id="settings-form" onsubmit="return false">
   <section class="panel" aria-labelledby="who-h">
     <h2 id="who-h" class="panel-h">The two people</h2>
     <label class="field" for="owner_email">Your email address</label>
@@ -58,6 +58,12 @@
     <label class="field" for="smtp_from">From address</label>
     <input id="smtp_from" name="smtp_from" type="email" value="{{ cfg.smtp_from }}">
     <p class="hint">Leave blank to use the username.</p>
+
+    <div class="actions">
+      <button class="btn" type="button" id="test-mail">Send myself a test</button>
+      <span class="hint" id="test-mail-said"></span>
+    </div>
+    <p class="hint">A short message to you, to prove this part works. It sends nothing to your person and does not touch the timer.</p>
   </section>
 
   <section class="panel" aria-labelledby="time-h">
@@ -101,8 +107,6 @@
     {% if cfg.base_url_is_local %}
     <p class="tint warning">! That address only works on this network. A check-in link built from it will not open on a phone away from home. Use whatever address you reach this on from outside.</p>
     {% endif %}
-
-    <div class="actions"><button class="btn primary" type="submit">Save settings</button></div>
   </section>
 </form>
 
@@ -166,10 +170,9 @@
   <h2 id="letter-h" class="panel-h">Your letter</h2>
   <p class="hint">Sent in the body of the email that carries your files. Leave it empty if you would rather say nothing.</p>
   <p class="tint warning">! This is not encrypted the way your files are. Anyone who takes the server could read it. Keep it to a few words for your person, and put anything private inside the locked files instead.</p>
-  <form method="post" action="/settings/letter">
+  <form class="autosave" onsubmit="return false">
     <label class="field sr-only" for="letter">Your letter</label>
     <textarea id="letter" name="letter" rows="10" placeholder="Dear ...">{{ cfg.letter }}</textarea>
-    <div class="actions"><button class="btn" type="submit">Save the letter</button></div>
   </form>
 </section>
 
@@ -186,13 +189,7 @@
     <div class="actions"><button class="btn" type="submit">Change password</button></div>
   </form>
 </section>
-<script>
-(function () {
-  var b = document.getElementById('use-here');
-  var box = document.getElementById('base_url');
-  if (b && box) b.addEventListener('click', function () { box.value = b.dataset.here; box.focus(); });
-})();
-</script>
+<script src="{{ url_for('static', filename='js/settings.js') }}?v={{ app_version }}"></script>
 <script src="{{ url_for('static', filename='js/seal.js') }}?v={{ app_version }}"></script>
 <script src="{{ url_for('static', filename='js/files.js') }}?v={{ app_version }}"></script>
 {% endblock %}
