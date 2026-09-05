@@ -2,6 +2,17 @@
 
 All notable changes to Departed are recorded here.
 
+## [0.3.0] — 2026-09-05
+
+Everything moved out of the server and into the app.
+
+- **Accounts.** Several people can share one copy. Each has their own settings, their own files, their own letter, their own timer and their own log, and nobody can see anybody else's. The first visit makes the first account, which is the administrator, and administrators get a People page to add and remove others.
+- **A settings page.** Email addresses, mail server, timing, timezone and web address are all set in the browser now. The mail password is stored encrypted and never shown again once saved.
+- **Your files are uploaded through the app.** Add them, see them listed with their size and date, remove them. There is no folder to copy things into over SSH any more. They are still encrypted by you first: the app never opens them.
+- **A letter.** A few words that go in the body of the email carrying your files. Stored encrypted at rest, but the app can read it, so the page says plainly to keep anything private inside the locked files instead.
+- **The compose file has no settings in it at all.** Only a port and a folder. Nothing in `.env` is a secret.
+- Sign-in now has a username as well as a password, and the password is stored as a slow salted hash rather than compared against an environment variable.
+
 ## [0.2.0] — 2026-09-05
 
 - The dashboard now asks for a password, set as `DASHBOARD_PASSWORD` in `.env`. One password, no usernames. Signing in lasts 30 days on that browser, and changing the password signs everyone out.

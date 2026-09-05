@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block title %}Make the first account - Departed{% endblock %}
+{% block content %}
+<section class="panel gate">
+  <h1 class="gate-h">Make the first account</h1>
+  <p class="hint">This one is the administrator, and can add other people later. Nothing is set up in advance, so everything else is done in here rather than in a file on the server.</p>
+  {% if error %}<p class="tint danger" role="alert">! {{ error }}</p>{% endif %}
+  <form method="post" action="/setup">
+    <label class="field" for="username">Username</label>
+    <input id="username" name="username" type="text" autocomplete="username" autofocus required>
+    <label class="field" for="password">Password</label>
+    <input id="password" name="password" type="password" autocomplete="new-password" required minlength="10">
+    <p class="hint">At least 10 characters.</p>
+    <label class="field" for="confirm">Password again</label>
+    <input id="confirm" name="confirm" type="password" autocomplete="new-password" required>
+    <button class="btn primary" type="submit">Make the account</button>
+  </form>
+</section>
+{% endblock %}

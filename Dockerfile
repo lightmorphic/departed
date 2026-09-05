@@ -23,7 +23,6 @@ ENV PATH="/opt/venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     DEPARTED_DATA_DIR=/data \
-    DEPARTED_ARCHIVE_DIR=/archive \
     DEPARTED_PORT=8080
 
 COPY --from=build /opt/venv /opt/venv
@@ -32,7 +31,7 @@ WORKDIR /app
 COPY app ./app
 COPY run.py VERSION ./
 
-RUN mkdir -p /data /archive && chown -R 1000:1000 /data /app
+RUN mkdir -p /data && chown -R 1000:1000 /data /app
 
 USER 1000
 EXPOSE 8080

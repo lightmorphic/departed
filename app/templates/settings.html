@@ -1,0 +1,147 @@
+{% extends "layout.html" %}
+{% set nav = 'settings' %}
+{% block title %}Settings - Departed{% endblock %}
+{% block content %}
+<h1 class="title">Settings</h1>
+<p class="lede">Everything lives here. Nothing needs editing on the server.</p>
+
+{% if error %}<p class="tint danger" role="alert">! {{ error }}</p>{% endif %}
+{% if done %}<p class="tint success" role="status">✓ {{ {'saved':'Settings saved.','letter':'Your letter was saved.','uploaded':'Files added.','deleted':'File removed.','password':'Your password was changed.'}.get(done, 'Done.') }}</p>{% endif %}
+
+{% if cfg.problems %}
+<section class="panel notice warning">
+  <h2 class="panel-h">! Still needed</h2>
+  <ul>{% for p in cfg.problems %}<li>{{ p }}</li>{% endfor %}</ul>
+</section>
+{% endif %}
+
+<form method="post" action="/settings">
+  <section class="panel" aria-labelledby="who-h">
+    <h2 id="who-h" class="panel-h">The two people</h2>
+    <label class="field" for="owner_email">Your email address</label>
+    <input id="owner_email" name="owner_email" type="email" value="{{ cfg.owner_email }}" autocomplete="email">
+    <p class="hint">Where the check-in emails go.</p>
+
+    <label class="field" for="recipient_email">Your person's email address</label>
+    <input id="recipient_email" name="recipient_email" type="email" value="{{ cfg.recipient_email }}">
+    <p class="hint">The one person who receives your files if you stop answering. They already have the passphrase, because you gave it to them yourself.</p>
+  </section>
+
+  <section class="panel" aria-labelledby="smtp-h">
+    <h2 id="smtp-h" class="panel-h">Sending mail</h2>
+    <div class="two">
+      <div>
+        <label class="field" for="smtp_host">Mail server</label>
+        <input id="smtp_host" name="smtp_host" type="text" value="{{ cfg.smtp_host }}" placeholder="smtp.example.com">
+      </div>
+      <div>
+        <label class="field" for="smtp_port">Port</label>
+        <input id="smtp_port" name="smtp_port" type="number" value="{{ cfg.smtp_port }}" min="1" max="65535">
+      </div>
+    </div>
+
+    <label class="field" for="smtp_security">Encryption</label>
+    <select id="smtp_security" name="smtp_security">
+      {% for value, label in security_choices %}
+      <option value="{{ value }}" {% if cfg.smtp_security == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+
+    <label class="field" for="smtp_username">Username</label>
+    <input id="smtp_username" name="smtp_username" type="text" value="{{ cfg.smtp_username }}" autocomplete="off">
+
+    <label class="field" for="smtp_password">Password</label>
+    <input id="smtp_password" name="smtp_password" type="password" autocomplete="new-password"
+           placeholder="{{ 'Saved. Leave blank to keep it.' if cfg.smtp_password else 'Your mail password' }}">
+    <p class="hint">Kept encrypted in the app's own database and never shown again once saved.</p>
+
+    <label class="field" for="smtp_from">From address</label>
+    <input id="smtp_from" name="smtp_from" type="email" value="{{ cfg.smtp_from }}">
+    <p class="hint">Leave blank to use the username.</p>
+  </section>
+
+  <section class="panel" aria-labelledby="time-h">
+    <h2 id="time-h" class="panel-h">The timing</h2>
+    <div class="three">
+      <div>
+        <label class="field" for="checkin_interval_days">Days between check-ins</label>
+        <input id="checkin_interval_days" name="checkin_interval_days" type="number" step="0.01" min="0.01" value="{{ cfg.checkin_interval_days }}">
+      </div>
+      <div>
+        <label class="field" for="reminder_count">Reminders after that</label>
+        <input id="reminder_count" name="reminder_count" type="number" min="0" max="365" value="{{ cfg.reminder_count }}">
+      </div>
+      <div>
+        <label class="field" for="reminder_interval_days">Days between reminders</label>
+        <input id="reminder_interval_days" name="reminder_interval_days" type="number" step="0.01" min="0.01" value="{{ cfg.reminder_interval_days }}">
+      </div>
+    </div>
+    <p class="hint">With the usual numbers, your files go out about 21 days after your last check-in. Fractions are allowed, so 0.01 is about a quarter of an hour, which is handy for testing.</p>
+
+    <label class="field" for="timezone">Timezone</label>
+    <input id="timezone" name="timezone" type="text" value="{{ cfg.timezone }}" placeholder="Europe/London">
+    <p class="hint">Used for the dates in emails and on this dashboard.</p>
+  </section>
+
+  <section class="panel" aria-labelledby="url-h">
+    <h2 id="url-h" class="panel-h">The web address</h2>
+    <label class="field" for="base_url">Address you open this at</label>
+    <input id="base_url" name="base_url" type="url" value="{{ cfg.base_url }}" placeholder="https://departed.example.com">
+    <p class="hint">Your check-in links are built from this, so it has to work from wherever you read your email, not only from inside the house. How you make that happen is up to you.</p>
+    <div class="actions"><button class="btn primary" type="submit">Save settings</button></div>
+  </section>
+</form>
+
+<section class="panel" id="files" aria-labelledby="files-h">
+  <h2 id="files-h" class="panel-h">Your files</h2>
+  <p class="tint warning">! Lock these yourself before you add them. Encrypt them on your own computer, with a passphrase this program never sees. Departed only carries the sealed envelope; it cannot open it and neither can anybody who takes the server.</p>
+  {% if archive.count %}
+  <ul class="files">
+    {% for f in archive.files %}
+    <li>
+      <span>{{ f.name }}</span>
+      <span class="hint">{{ size(f.size) }} · {{ fmt(f.modified) }}</span>
+      <form method="post" action="/files/delete" class="inline">
+        <input type="hidden" name="name" value="{{ f.name }}">
+        <button class="btn danger small" type="submit" data-confirm="Remove {{ f.name }}?">Remove</button>
+      </form>
+    </li>
+    {% endfor %}
+  </ul>
+  <p class="hint">{{ archive.count }} file{{ 's' if archive.count != 1 }}, {{ size(archive.total_size) }} in total.{% if archive.count > 1 %} They are zipped together when sent.{% endif %}</p>
+  {% else %}
+  <p class="hint">Nothing here yet. The switch will not fire with nothing to send.</p>
+  {% endif %}
+  <form method="post" action="/files" enctype="multipart/form-data" class="upload">
+    <label class="field" for="files-input">Add files</label>
+    <input id="files-input" name="files" type="file" multiple required>
+    <p class="hint">Up to {{ max_mb }} MB at a time. Many mail servers refuse attachments over about 20 MB, so keep the total modest and send yourself a test.</p>
+    <button class="btn" type="submit">Add to the archive</button>
+  </form>
+</section>
+
+<section class="panel" aria-labelledby="letter-h">
+  <h2 id="letter-h" class="panel-h">Your letter</h2>
+  <p class="hint">Sent in the body of the email that carries your files. Leave it empty if you would rather say nothing.</p>
+  <p class="tint warning">! This is not encrypted the way your files are. Anyone who takes the server could read it. Keep it to a few words for your person, and put anything private inside the locked files instead.</p>
+  <form method="post" action="/settings/letter">
+    <label class="field sr-only" for="letter">Your letter</label>
+    <textarea id="letter" name="letter" rows="10" placeholder="Dear ...">{{ cfg.letter }}</textarea>
+    <div class="actions"><button class="btn" type="submit">Save the letter</button></div>
+  </form>
+</section>
+
+<section class="panel" aria-labelledby="pw-h">
+  <h2 id="pw-h" class="panel-h">Your password</h2>
+  <form method="post" action="/settings/password">
+    <label class="field" for="current">Current password</label>
+    <input id="current" name="current" type="password" autocomplete="current-password" required>
+    <label class="field" for="new-password">New password</label>
+    <input id="new-password" name="password" type="password" autocomplete="new-password" required minlength="10">
+    <label class="field" for="confirm">New password again</label>
+    <input id="confirm" name="confirm" type="password" autocomplete="new-password" required>
+    <p class="hint">Changing this signs you out everywhere else.</p>
+    <div class="actions"><button class="btn" type="submit">Change password</button></div>
+  </form>
+</section>
+{% endblock %}

@@ -3,22 +3,25 @@ import logging
 import smtplib
 import ssl
 from email.message import EmailMessage
+from email.utils import formatdate
 
 log = logging.getLogger("departed.mail")
 
 
 class Mailer:
-    def __init__(self, cfg):
-        self.cfg = cfg
+    def __init__(self, settings):
+        """settings is a callable returning the current settings."""
+        self._settings = settings
 
     def send(self, to, subject, body, attachment=None):
         """Send one plain-text email. attachment is (filename, bytes) or None.
         Raises on failure so the caller decides what to do."""
-        cfg = self.cfg
+        cfg = self._settings()
         msg = EmailMessage()
-        msg["From"] = cfg.smtp_from
+        msg["From"] = cfg.from_address
         msg["To"] = to
         msg["Subject"] = subject
+        msg["Date"] = formatdate(localtime=True)
         msg.set_content(body)
         if attachment:
             name, data = attachment

@@ -171,9 +171,10 @@
     </div>
     <div class="words reveal">
       <h2 id="sealed-h">What it never knows</h2>
-      <p>You lock the files on your own computer, with a passphrase of your own choosing. Only then do they go into the folder it watches. It never looks inside and it never holds the key.</p>
+      <p>You lock the files on your own computer, with a passphrase of your own choosing. Only then do you hand them to Departed, on its own settings page. It never looks inside and it never holds the key.</p>
       <p>It is a courier carrying a sealed envelope. If somebody stole the machine tomorrow, or read the email on its way, they would have the sealed envelope and nothing else.</p>
       <p class="quiet">The person you chose already has the key. You gave it to them yourself, out loud, in a room.</p>
+      <p>You can write them a few words as well, to go in the body of the email. That much the program can read, so it is for a greeting rather than for anything private.</p>
     </div>
   </section>
 
@@ -255,21 +256,22 @@
   <section class="run" id="run" aria-labelledby="run-h">
     <div class="head reveal">
       <h2 id="run-h">Putting it on your server</h2>
-      <p>You need a machine at home running Docker. Everything below is copy and paste, and the whole thing is two files in one folder.</p>
+      <p>You need a machine at home running Docker. There is nothing to configure on the server: two short files, one command, and everything else is done in the browser afterwards.</p>
     </div>
 
     <ol class="steps">
       <li class="reveal">
         <h3>Make a folder for it</h3>
-        <p>The first folder holds its notes. The second is where your locked files go. The app runs as an ordinary user rather than as root, which is why the folder is handed to user 1000.</p>
-<pre><code>sudo mkdir -p /opt/departed/data /opt/departed/archive
-sudo chown -R 1000:1000 /opt/departed/data</code></pre>
+        <p>This one folder holds everything: the database, your files and the log. Back it up and you have the lot. The app runs as an ordinary user rather than as root, which is why the folder is handed to user 1000.</p>
+<pre><code>sudo mkdir -p /opt/departed
+sudo chown -R 1000:1000 /opt/departed</code></pre>
       </li>
 
       <li class="reveal">
         <h3>Save this as <code>/opt/departed/docker-compose.yml</code></h3>
-        <p>There is nothing to change in it. Every setting comes from the file in the next step.</p>
-<pre><code># Nothing to edit here. Every setting comes from the .env file beside it.
+        <p>There is nothing to change in it, and no settings in it. Notice what is missing: no email addresses, no mail server, no passwords.</p>
+<pre><code># Nothing in here is a setting. Email addresses, the mail server, the timing and
+# your files all live inside the app, on its settings page.
 services:
   departed:
     image: ghcr.io/lightmorphic/departed:latest
@@ -278,65 +280,25 @@ services:
     ports:
       - &quot;${DEPARTED_PORT:-4160}:8080&quot;
     volumes:
-      - ${DEPARTED_DATA:-/opt/departed}/data:/data
-      - ${ARCHIVE_DIR:-/opt/departed/archive}:/archive:ro
-    environment:
-      OWNER_EMAIL: ${OWNER_EMAIL}
-      RECIPIENT_EMAIL: ${RECIPIENT_EMAIL}
-      SMTP_HOST: ${SMTP_HOST}
-      SMTP_PORT: ${SMTP_PORT:-587}
-      SMTP_USERNAME: ${SMTP_USERNAME}
-      SMTP_PASSWORD: ${SMTP_PASSWORD}
-      SMTP_FROM: ${SMTP_FROM}
-      SMTP_SECURITY: ${SMTP_SECURITY:-starttls}
-      BASE_URL: ${BASE_URL}
-      DASHBOARD_PASSWORD: ${DASHBOARD_PASSWORD}
-      CHECKIN_INTERVAL_DAYS: ${CHECKIN_INTERVAL_DAYS:-10}
-      REMINDER_COUNT: ${REMINDER_COUNT:-10}
-      REMINDER_INTERVAL_DAYS: ${REMINDER_INTERVAL_DAYS:-1}
-      TZ: ${TZ:-Europe/London}</code></pre>
+      - ${DEPARTED_DATA:-/opt/departed}:/data</code></pre>
       </li>
 
       <li class="reveal">
         <h3>Save this as <code>/opt/departed/.env</code></h3>
-        <p>This is the only file you edit. Fill in your two email addresses, your mail server, a dashboard password, and the address you will open it at.</p>
-<pre><code># Where you get the check-in emails, and who gets the archive.
-OWNER_EMAIL=you@example.com
-RECIPIENT_EMAIL=trusted.person@example.com
+        <p>Two lines, and neither is a secret. Change the port if something else is already using it.</p>
+<pre><code># Copy this to .env. There are only two things here, and neither is a secret.
+# Everything else is set on the app&#x27;s own settings page in the browser.
 
-# Your outgoing mail server.
-SMTP_HOST=smtp.example.com
-SMTP_PORT=587
-SMTP_USERNAME=you@example.com
-SMTP_PASSWORD=your-mail-password
-SMTP_FROM=you@example.com
-SMTP_SECURITY=starttls
-
-# The password for the dashboard. Make it long.
-DASHBOARD_PASSWORD=pick-something-long-and-private
-
-# The address the check-in links point at. It has to work from
-# wherever you read your email, so use the address you reach the
-# server on from outside, not a name only your home network knows.
-BASE_URL=https://departed.example.com
-
-# The timing, in days.
-CHECKIN_INTERVAL_DAYS=10
-REMINDER_COUNT=10
-REMINDER_INTERVAL_DAYS=1
-
-# Where things live on the server.
+# The port you open in the browser: http://&lt;your-server&gt;:4160
 DEPARTED_PORT=4160
+
+# The folder on the server that holds the database, your files and the log.
+# Back this folder up and you have everything.
 DEPARTED_DATA=/opt/departed
-ARCHIVE_DIR=/opt/departed/archive
 
-TZ=Europe/London</code></pre>
-        <p class="aside">Keep this file to yourself: <code>chmod 600 /opt/departed/.env</code>. Your archive passphrase is <strong>not</strong> in here, and never should be. Departed has no use for it.</p>
-      </li>
-
-      <li class="reveal">
-        <h3>Put your locked archive in the folder</h3>
-        <p>Encrypt your files on your own computer first, with whatever you already trust. Then copy the result into <code>/opt/departed/archive</code>. One file is sent as it is. Several are put in a zip first, so you can add more later.</p>
+# Optional. Largest single upload, in megabytes. Most mail servers refuse
+# attachments over about 25 MB anyway.
+# MAX_UPLOAD_MB=64</code></pre>
       </li>
 
       <li class="reveal">
@@ -346,16 +308,25 @@ docker compose up -d</code></pre>
       </li>
 
       <li class="reveal">
-        <h3>Open it and send yourself a test</h3>
-        <p>Go to <code>http://your-server:4160</code>, sign in with the password you chose, and press <em>Send a test email</em>. It posts the archive to you rather than to the person you named, so you can watch the whole thing arrive without setting anything off.</p>
-        <p>If a check-in email ever finds you away from home, the link in it still opens without the password, so one tap on a phone is enough.</p>
+        <h3>Open it and make your account</h3>
+        <p>Go to <code>http://your-server:4160</code>. The first visit asks you to pick a username and a password, and that first account can add other people later.</p>
+      </li>
+
+      <li class="reveal">
+        <h3>Fill in the settings page</h3>
+        <p>Your email address, your person's email address, your mail server, and how long the whole thing should take. Then add your locked files and, if you want, write your letter.</p>
+        <p>When it looks right, press <em>Send a test email</em>. It posts everything to you rather than to them, so you can watch it arrive before you ever rely on it.</p>
       </li>
     </ol>
 
     <div class="after reveal">
+      <h3>Everybody in the house, on one copy</h3>
+      <p>Each person gets their own account, their own settings, their own files and their own timer. Nobody can see anybody else's, and the person who set it up can add and remove accounts.</p>
+
       <h3>Reaching it from outside the house</h3>
       <p>Departed has no business being on the open internet, and it does not try to put itself there. Keep it on your own network and reach it from outside through whatever private connection you already use for your server. That part is yours to set up, and there are several good ways to do it.</p>
-      <p>Whatever address that gives you, put it in <code>BASE_URL</code>. The links in your check-in emails are built from it, so it has to work from wherever you read your email. The password on the dashboard is a second lock, not the first one.</p>
+      <p>Whatever address that gives you, put it in the web address setting. The links in your check-in emails are built from it, so it has to work from wherever you read your email. Signing in is a second lock, not the first one.</p>
+
       <h3>Keeping it up to date</h3>
 <pre><code>cd /opt/departed
 docker compose pull

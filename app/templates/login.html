@@ -3,16 +3,17 @@
 {% block content %}
 <section class="panel gate">
   <h1 class="gate-h">Departed</h1>
-  <p class="hint">This dashboard is password protected.</p>
+  <p class="hint">Sign in to see your switch.</p>
   {% if error %}
   <p class="tint danger" role="alert">! {{ error }}{% if wait %} Try again in {{ wait }} seconds.{% endif %}</p>
   {% endif %}
   <form method="post" action="/login">
+    <label class="field" for="username">Username</label>
+    <input id="username" name="username" type="text" autocomplete="username" autofocus required {% if wait %}disabled{% endif %}>
     <label class="field" for="password">Password</label>
-    <input id="password" name="password" type="password" autocomplete="current-password"
-           autofocus required {% if wait %}disabled{% endif %}>
+    <input id="password" name="password" type="password" autocomplete="current-password" required {% if wait %}disabled{% endif %}>
     <button class="btn primary" type="submit" {% if wait %}disabled{% endif %}>Sign in</button>
   </form>
-  <p class="hint gate-note">The check-in links emailed to you keep working without this password, so you can always check in from your phone.</p>
+  <p class="hint gate-note">The check-in links emailed to you keep working without signing in, so you can always check in from your phone with one tap.</p>
 </section>
 {% endblock %}
