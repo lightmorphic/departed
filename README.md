@@ -85,7 +85,11 @@ The compose file pulls a published image, so there is nothing to build. If you w
 
 ## Access
 
-There is no login. Put it behind Tailscale (or another private network) and keep it off the internet. Over Tailscale Serve: `tailscale serve --bg --https=4160 http://127.0.0.1:4160`, and set `BASE_URL` to that `https://...ts.net:4160` address so the links in the emails work from your phone.
+Departed has no business being on the open internet. Keep it on your own network, and reach it from outside through whatever private connection you already use for that. Setting that up is your business, not this app's.
+
+Whatever address it gives you, put it in `BASE_URL`. That is what the links in your check-in emails are built from, so it has to work from wherever you read your email.
+
+The dashboard password is a second lock, not the first one. Do not treat it as a reason to expose the app.
 
 ## Licence
 
