@@ -316,9 +316,9 @@ SMTP_SECURITY=starttls
 DASHBOARD_PASSWORD=pick-something-long-and-private
 
 # The address the check-in links point at. It has to work from
-# wherever you read your email, so use your Tailscale address
-# rather than a name only your home network knows.
-BASE_URL=https://your-server.your-tailnet.ts.net:4160
+# wherever you read your email, so use the address you reach the
+# server on from outside, not a name only your home network knows.
+BASE_URL=https://departed.example.com
 
 # The timing, in days.
 CHECKIN_INTERVAL_DAYS=10
@@ -354,8 +354,8 @@ docker compose up -d</code></pre>
 
     <div class="after reveal">
       <h3>Reaching it from outside the house</h3>
-      <p>Departed has no business being on the open internet. Put it on <a href="https://tailscale.com">Tailscale</a> and only your own devices can see it. One command shares it, and then you set <code>BASE_URL</code> to that address so the links in your emails work from your phone.</p>
-<pre><code>tailscale serve --bg --https=4160 http://127.0.0.1:4160</code></pre>
+      <p>Departed has no business being on the open internet, and it does not try to put itself there. Keep it on your own network and reach it from outside through whatever private connection you already use for your server. That part is yours to set up, and there are several good ways to do it.</p>
+      <p>Whatever address that gives you, put it in <code>BASE_URL</code>. The links in your check-in emails are built from it, so it has to work from wherever you read your email. The password on the dashboard is a second lock, not the first one.</p>
       <h3>Keeping it up to date</h3>
 <pre><code>cd /opt/departed
 docker compose pull
