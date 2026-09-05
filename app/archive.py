@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 
 SAFE = re.compile(r"[^A-Za-z0-9._-]+")
 
-SEALED_NAME = "departed-sealed.enc"
+SEALED_NAME = "Open-me.html"
 
 
 def safe_name(name):

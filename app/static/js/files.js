@@ -136,11 +136,38 @@
     render();
   }
 
+  var sealSource = null;
+
+  async function sealCode() {
+    if (sealSource === null) {
+      var res = await fetch('/static/js/seal.js');
+      if (!res.ok) throw new Error('the opening code could not be read');
+      sealSource = await res.text();
+    }
+    return sealSource;
+  }
+
+  /* What gets stored, and what gets emailed, is a single web page with the
+   * sealed bytes inside it. Whoever receives it double-clicks it and types the
+   * passphrase. No program to install, on any computer. */
   async function upload(sealed) {
+    var page = Seal.makeOpener(sealed, await sealCode(), new Date());
     var form = new FormData();
-    form.append('sealed', new Blob([sealed], { type: 'application/octet-stream' }), 'departed-sealed.enc');
+    form.append('sealed', new Blob([page], { type: 'text/html' }), 'Open-me.html');
     var res = await fetch('/files/sealed', { method: 'POST', body: form });
     if (!res.ok) throw new Error('the server would not take it (' + res.status + ')');
+  }
+
+  /* Reads the sealed bytes back, whether they are wrapped in one of those pages
+   * or sitting there raw. */
+  async function fetchSealed() {
+    var res = await fetch('/files/sealed');
+    if (!res.ok) throw new Error('the sealed archive could not be fetched');
+    var raw = new Uint8Array(await res.arrayBuffer());
+    if (raw.length > 8 && String.fromCharCode.apply(null, raw.subarray(0, 8)) === 'Salted__') return raw;
+    var found = Seal.payloadFrom(new TextDecoder().decode(raw));
+    if (!found) throw new Error('that file does not hold a sealed archive');
+    return found;
   }
 
   function done(pass, all, showPass) {
@@ -158,6 +185,10 @@
       printIt.addEventListener('click', function () { window.print(); });
       nodes.push(el('div', { 'class': 'actions' }, [copy, printIt]));
       nodes.push(el('p', { 'class': 'hint', text: 'Your person needs this passphrase and nothing else. Give it to them in person rather than by email or message.' }));
+      nodes.push(el('h3', { 'class': 'sub-h', text: 'What they will receive' }));
+      nodes.push(el('p', { 'class': 'hint', text: 'One file called Open me. They save it, double-click it, and it opens in their browser and asks for the passphrase. Nothing to install, on Windows, Mac or Linux. Take a copy and try it yourself.' }));
+      var grab = el('a', { 'class': 'btn', href: '/files/sealed', download: 'Open-me.html', text: 'Save a copy to try' });
+      nodes.push(el('div', { 'class': 'actions' }, [grab]));
     }
     var reload = el('button', { type: 'button', 'class': 'btn primary', text: 'Done' });
     reload.addEventListener('click', function () { location.href = '/settings?done=sealed'; });
@@ -182,10 +213,7 @@
     async function attempt() {
       busy(go, true, 'Opening...');
       try {
-        var res = await fetch('/files/sealed');
-        if (!res.ok) throw new Error('the sealed archive could not be fetched');
-        var sealed = new Uint8Array(await res.arrayBuffer());
-        var inside = await Seal.open(sealed, input.value);
+        var inside = await Seal.open(await fetchSealed(), input.value);
         then(inside, input.value);
       } catch (e) {
         busy(go, false);

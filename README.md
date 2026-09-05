@@ -69,15 +69,19 @@ To change what is inside, press **Change what is inside** and give the passphras
 
 **The honest caveat.** The page doing this work is served by your own server. If somebody took over that server they could change the page to steal the passphrase as you typed it. That is true of every web page that does encryption. If you want no such doubt, encrypt the files with your own tool on your own machine and upload the result instead. Both routes are supported, and the second one is why the first is optional.
 
-### Opening a sealed archive
+### What the recipient gets
 
-The recipient does not need this program. The sealed file is an ordinary OpenSSL container holding an ordinary zip:
+One file, called **Open me**. They save it, double-click it, and it opens in whatever browser their computer already has and asks for the passphrase. Then their files are listed with a button to save each one, or all of them.
+
+Nothing to install. It works on Windows, on a Mac and on Linux, and it works with no internet connection: the file carries both the encrypted archive and the code that opens it, and it never reaches out to anything. There is a test that fails if that file ever gains a single external address.
+
+It is a web page only on the outside. Inside it is an ordinary OpenSSL container holding an ordinary zip, and the page has a button to save that out. Anyone who would rather not trust a web page can use one command instead:
 
 ```bash
-openssl enc -d -aes-256-cbc -pbkdf2 -iter 600000 -md sha256 -in departed-sealed.enc -out inside.zip
+openssl enc -d -aes-256-cbc -pbkdf2 -iter 600000 -md sha256 -in sealed.enc -out inside.zip
 ```
 
-There is also a page at `/open`, and the same page on the website, which does it in the browser without uploading anything. The email that carries the archive tells the recipient both ways.
+The email that carries the archive explains the double-click, and the file itself explains the command. There is also a page at `/open`, and the same page on the website, which takes either kind of file.
 
 ### Accounts
 
