@@ -1,5 +1,7 @@
 # Departed
 
+> **Beta.** Departed is new, and nobody has run it for long. Try it, read the code, and tell me what breaks. Do not trust it yet with something that matters. Test the whole path with the **Send a test email** button before you rely on any of it.
+
 A dead man's switch. A small self-hosted service that emails a pre-encrypted archive to one trusted person if you stop responding to check-in emails.
 
 - Every 10 days it emails you a check-in link. Click it and the clock resets.

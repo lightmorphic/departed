@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Departed — a quiet way to leave something behind</title>
-<meta name="description" content="Departed waits. Every ten days it asks whether you are still here. If you stop answering, the files you locked yourself are sent, once, to the one person you chose.">
+<title>Departed: a dead man's switch you run yourself</title>
+<meta name="description" content="Departed emails an archive you locked yourself to one trusted person if you stop answering its check-in emails. It runs on a computer in your own home. Free and open source.">
 <link rel="canonical" href="https://departed.lightmorphic.com/">
 <meta name="theme-color" content="#05070c">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Departed">
-<meta property="og:title" content="Departed — a quiet way to leave something behind">
-<meta property="og:description" content="Every ten days it asks whether you are still here. If you stop answering, the files you locked yourself are sent, once, to the one person you chose.">
+<meta property="og:title" content="Departed: a dead man's switch you run yourself">
+<meta property="og:description" content="Every ten days it emails to ask whether you are still here. If you stop answering, the files you locked yourself go to the one person you chose.">
 <meta property="og:url" content="https://departed.lightmorphic.com/">
 <meta property="og:image" content="https://departed.lightmorphic.com/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="A single warm light on a dark horizon, above the word Departed.">
+<meta property="og:image:alt" content="A single warm light on a dark horizon at dusk.">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="style.css">
 <script type="application/ld+json">
@@ -31,17 +31,20 @@
 <body>
 <a class="skip" href="#main">Skip to content</a>
 
-<header class="site">
-  <a class="brand" href="/">
-    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".45"/><circle cx="12" cy="12" r="3.4" fill="currentColor"/></svg>
-    <span>Departed</span>
-  </a>
-  <nav aria-label="Main">
-    <a href="#how">How it works</a>
-    <a href="#sealed">What it never knows</a>
-    <a href="#run" class="nav-cta">Set it up</a>
-  </nav>
-</header>
+<div class="topstack">
+  <p class="beta"><span class="tag">Beta</span> Departed is new, and nobody has run it for long. Try it, read the code, tell me what breaks. Do not trust it yet with something that matters.</p>
+  <header class="site">
+    <a class="brand" href="/">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".45"/><circle cx="12" cy="12" r="3.4" fill="currentColor"/></svg>
+      <span>Departed</span>
+    </a>
+    <nav aria-label="Main">
+      <a href="#how">How it works</a>
+      <a href="#sealed">What it never knows</a>
+      <a href="#run" class="nav-cta">Set it up</a>
+    </nav>
+  </header>
+</div>
 
 <main id="main">
 
@@ -71,14 +74,12 @@
         <rect width="1440" height="900" fill="url(#skyGrad)"/>
         <ellipse class="horizon-glow" cx="1000" cy="672" rx="700" ry="270" fill="url(#glow)"/>
 
-        <!-- mist, drifting -->
         <g class="mist">
           <ellipse class="m1" cx="300"  cy="638" rx="430" ry="16"/>
           <ellipse class="m2" cx="1080" cy="664" rx="520" ry="13"/>
           <ellipse class="m3" cx="700"  cy="700" rx="640" ry="18"/>
         </g>
 
-        <!-- hills, far to near -->
         <path class="hill far"  d="M-80 664 C 210 616, 350 646, 520 632 C 700 616, 830 656, 1010 636 C 1180 618, 1330 648, 1520 628 L1520 900 L-80 900 Z"/>
         <path class="hill mid"  d="M-80 728 C 190 690, 330 716, 500 704 C 690 690, 880 724, 1060 706 C 1230 690, 1350 716, 1520 698 L1520 900 L-80 900 Z"/>
         <path class="hill near" d="M-80 804 C 230 770, 420 796, 620 786 C 830 776, 1000 800, 1190 790 C 1340 784, 1420 792, 1520 784 L1520 900 L-80 900 Z"/>
@@ -95,62 +96,53 @@
     </div>
 
     <div class="hero-copy">
-      <p class="eyebrow">Departed</p>
       <h1 id="hero-h">If you stop answering,<br>one person receives<br>what you left them.</h1>
-      <p class="lede">A small, patient program. Every ten days it asks whether you are still here. You click once and it goes back to waiting. It runs on a computer in your own home and asks nothing of anybody else.</p>
+      <p class="lede">Departed sits on a computer in your own home and waits. Every ten days it emails to ask whether you are still here, and one click sends it back to waiting.</p>
       <p class="cta">
         <a class="btn primary" href="#how">See how it works</a>
         <a class="btn ghost" href="#run">Set it up</a>
       </p>
     </div>
-    <p class="scroll-hint" aria-hidden="true"><span></span></p>
   </section>
 
-  <!-- ── Three promises ─────────────────────────────────────────── -->
-  <section class="creed" aria-label="What Departed is">
-    <p class="reveal">You choose one person.</p>
-    <p class="reveal">You lock the files yourself, before they ever reach it.</p>
-    <p class="reveal">The key is given by hand, and never to a machine.</p>
+  <section class="opening">
+    <p class="reveal">You choose one person. You lock the files yourself, before they ever reach it, and you give that person the key by hand.</p>
   </section>
 
   <!-- ── Timeline ───────────────────────────────────────────────── -->
   <section class="how" id="how" aria-labelledby="how-h">
-    <div class="head">
-      <h2 id="how-h" class="reveal">Twenty-one quiet days</h2>
-      <p class="reveal">Nothing happens quickly here. It is built to be slow, so that an ordinary week away is never mistaken for something else.</p>
+    <div class="head reveal">
+      <h2 id="how-h">Twenty-one days</h2>
+      <p>Nothing happens quickly here. It is slow on purpose, so that an ordinary fortnight away is never mistaken for something worse.</p>
     </div>
 
     <ol class="timeline">
       <li class="step reveal">
         <span class="rail" aria-hidden="true"><i class="dot"></i></span>
         <div class="body">
-          <p class="when">Day ten</p>
-          <h3>An email arrives with one link in it.</h3>
-          <p>It asks nothing of you but a click. The clock returns to the beginning, a note comes back to say it was heard, and the link is retired so it can never be used twice.</p>
+          <h3>On the tenth day an email arrives, with one link in it.</h3>
+          <p>It asks nothing of you but a click. The clock goes back to the beginning and a note comes to say you were heard. That link then retires, so an old email can never answer on your behalf.</p>
         </div>
       </li>
       <li class="step reveal">
         <span class="rail" aria-hidden="true"><i class="dot"></i></span>
         <div class="body">
-          <p class="when">Days eleven to twenty</p>
-          <h3>If you don't click, it asks again.</h3>
-          <p>The same gentle email, once a day, ten more times. Any one of them will do. A holiday, a hospital stay, a phone left in a drawer — there is a great deal of room here for ordinary life.</p>
+          <h3>If you don't click, it asks again the next day.</h3>
+          <p>The same email, once a day, for ten more days. Any one of them will do. There is a great deal of room in that for a holiday, or a hospital stay, or a phone left in a drawer.</p>
         </div>
       </li>
       <li class="step reveal">
         <span class="rail" aria-hidden="true"><i class="dot"></i></span>
         <div class="body">
-          <p class="when">Day twenty-one</p>
-          <h3>It sends what you prepared.</h3>
-          <p>One email, to the one person you named, with your locked files attached exactly as you left them. You are told as well, in case you are simply somewhere without a signal.</p>
+          <h3>On the twenty-first day it sends what you prepared.</h3>
+          <p>One email, to the one person you named, carrying your locked files exactly as you left them. You are told as well, in case you are simply somewhere without a signal.</p>
         </div>
       </li>
       <li class="step reveal last">
         <span class="rail" aria-hidden="true"><i class="dot"></i></span>
         <div class="body">
-          <p class="when">Afterwards</p>
-          <h3>It stops.</h3>
-          <p>It does not send again, or keep asking, or tell anybody else. It has done the only thing it was ever made to do.</p>
+          <h3>Then it stops.</h3>
+          <p>It does not send again or keep asking. It has done the only thing it was ever made to do.</p>
         </div>
       </li>
     </ol>
@@ -177,36 +169,38 @@
         <circle class="wax-ring" cx="170" cy="138" r="9.5"/>
       </svg>
     </div>
-    <div class="words">
-      <h2 id="sealed-h" class="reveal">What it never knows</h2>
-      <p class="reveal">You lock the files on your own computer, with a passphrase of your own choosing. Only then do they go into the folder it watches. It never looks inside, never holds the key, never writes it down anywhere — not in its notes, not in its settings, not in its records of the day.</p>
-      <p class="reveal">It is a courier carrying a sealed envelope. If somebody stole the machine tomorrow, or read the email on its way, they would have the sealed envelope and nothing else.</p>
-      <p class="reveal quiet">The person you chose already has the key. You gave it to them yourself, out loud, in a room.</p>
+    <div class="words reveal">
+      <h2 id="sealed-h">What it never knows</h2>
+      <p>You lock the files on your own computer, with a passphrase of your own choosing. Only then do they go into the folder it watches. It never looks inside and it never holds the key.</p>
+      <p>It is a courier carrying a sealed envelope. If somebody stole the machine tomorrow, or read the email on its way, they would have the sealed envelope and nothing else.</p>
+      <p class="quiet">The person you chose already has the key. You gave it to them yourself, out loud, in a room.</p>
     </div>
   </section>
 
-  <!-- ── Care ───────────────────────────────────────────────────── -->
+  <!-- ── Bad days ───────────────────────────────────────────────── -->
   <section class="care" aria-labelledby="care-h">
-    <h2 id="care-h" class="reveal">If something goes wrong</h2>
-    <p class="sub reveal">Most of the work in a thing like this is what it does on a bad day.</p>
-    <div class="cards">
-      <article class="card reveal">
-        <h3>If it sends by mistake</h3>
-        <p>You are emailed too, the moment it happens. Change the passphrase, click once, and it begins again from the start. A false alarm costs you an afternoon, not your privacy.</p>
-      </article>
-      <article class="card reveal">
-        <h3>If there is nothing to send</h3>
-        <p>It will not send an empty envelope. If the folder is bare when the day comes, it holds everything and writes to you instead, once a day, until there is something there.</p>
-      </article>
-      <article class="card reveal">
-        <h3>If the message won't go</h3>
-        <p>A mail server that is down does not end the matter. It tries again every few minutes, for as long as it takes, and it never records the thing as done until it truly is.</p>
-      </article>
-      <article class="card reveal">
-        <h3>If the machine was switched off</h3>
-        <p>It does not come back and act on a stale clock. It picks up where it left off and works through the whole run of asking, one day at a time, before it does anything final.</p>
-      </article>
+    <div class="head reveal">
+      <h2 id="care-h">If something goes wrong</h2>
+      <p>Most of the work in a thing like this is what it does on a bad day.</p>
     </div>
+    <dl class="mishaps reveal">
+      <div>
+        <dt>It sends by mistake</dt>
+        <dd>You are emailed too, the moment it happens. Change the passphrase, click once, and it starts again from the beginning. A false alarm costs you an afternoon.</dd>
+      </div>
+      <div>
+        <dt>There is nothing to send</dt>
+        <dd>It will not send an empty envelope. If the folder is bare when the day comes, it holds everything and writes to you instead, once a day, until there is something there.</dd>
+      </div>
+      <div>
+        <dt>The message will not go</dt>
+        <dd>A mail server that is down does not end the matter. It tries again every few minutes for as long as it takes, and never records the thing as done until it truly is.</dd>
+      </div>
+      <div>
+        <dt>The machine was switched off</dt>
+        <dd>It does not come back and act on a stale clock. It works through the whole run of asking, one day at a time, before it does anything final.</dd>
+      </div>
+    </dl>
   </section>
 
   <!-- ── Home ───────────────────────────────────────────────────── -->
@@ -242,7 +236,7 @@
           <rect class="chimney" x="199" y="72" width="13" height="30" rx="2"/>
           <path class="roof" d="M92 122 L164 64 L236 122 Z"/>
           <rect class="walls" x="108" y="120" width="112" height="86" rx="2"/>
-          <path class="eave" d="M92 122 L164 64" />
+          <path class="eave" d="M92 122 L164 64"/>
           <rect class="door"  x="122" y="160" width="24" height="46" rx="2"/>
           <rect class="lit"   x="166" y="142" width="34" height="32" rx="1.5" fill="url(#glass)"/>
           <line class="bar" x1="183" y1="142" x2="183" y2="174"/>
@@ -250,10 +244,10 @@
         </g>
       </svg>
     </div>
-    <div class="words">
-      <h2 id="home-h" class="reveal">It lives in your house</h2>
-      <p class="reveal">Departed runs on a small computer of your own, on your own network, reachable only by you. There is no company holding your files, no account to lose, nothing to keep paying for. Nobody can be asked to hand over what they were never given.</p>
-      <p class="reveal">It is free, and the whole of it is open to read, so that anyone you trust can check for themselves what it does and what it cannot do.</p>
+    <div class="words reveal">
+      <h2 id="home-h">It lives in your house</h2>
+      <p>Departed runs on a small computer of your own, on your own network, reachable only by you. There is no company holding your files and no account to lose. Nobody can be asked to hand over what they were never given.</p>
+      <p>It is free, and the whole of it is open to read, so anyone you trust can check what it does and what it cannot do.</p>
     </div>
   </section>
 
@@ -261,9 +255,9 @@
   <section class="run" id="run" aria-labelledby="run-h">
     <div class="panel reveal">
       <h2 id="run-h">Setting it up</h2>
-      <p>This part needs somebody comfortable with a home server — you, or whoever looks after yours. It is three commands and a settings file.</p>
+      <p>This part wants somebody comfortable with a home server, whether that is you or whoever looks after yours. It is a settings file and one command.</p>
       <pre><code>docker compose up -d</code></pre>
-      <p class="hint">You put your locked files in one folder, write your email address, your person's email address and your mail settings into a plain settings file, and open the page it serves to press <em>Send a test email</em>. That test posts the whole thing to you rather than to them, so you can watch it arrive before you ever rely on it.</p>
+      <p>You put your locked files in one folder, then write two email addresses and your mail settings into the settings file. Open the page it serves and press <em>Send a test email</em>. That test posts the whole thing to you rather than to them, so you can watch it arrive before you ever rely on it.</p>
       <p class="cta">
         <a class="btn primary" href="https://github.com/lightmorphic/departed">Read it on GitHub</a>
         <a class="btn ghost" href="https://github.com/lightmorphic/departed#readme">Full instructions</a>
@@ -271,16 +265,12 @@
     </div>
   </section>
 
-  <section class="close" aria-label="In closing">
-    <p class="reveal">Set it once, and then forget it.<br>Clicking a link every ten days is a small thing.<br>Not having to think about it again is the point.</p>
-  </section>
-
 </main>
 
 <footer class="site-foot">
-  <p><strong>Departed</strong> — a Lightmorphic project. Free and open source under the GPL&nbsp;3.0.</p>
+  <p><strong>Departed</strong> is a Lightmorphic project, free and open source under the GPL&nbsp;3.0.</p>
   <p><a href="https://github.com/lightmorphic/departed">Source code</a> · <a href="https://lightmorph.co.uk">Lightmorphic</a></p>
-  <p class="tiny">This site sets no cookies, loads nothing from anywhere else, and counts nobody.</p>
+  <p class="tiny">This site sets no cookies and counts nobody.</p>
 </footer>
 
 <script>
