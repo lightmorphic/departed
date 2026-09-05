@@ -8,7 +8,7 @@ A dead man's switch. A small self-hosted service that emails an archive you lock
 - Ignore it and it sends the same link once a day for 10 more days.
 - Still nothing, and it emails your files to the person you chose, about 21 days after your last check-in. Once. Then it stops.
 
-Those three numbers are the ones it comes with, not the ones it is stuck with. All of them are on the settings page.
+Those are the timings it arrives with. You set all three yourself on the settings page: how long it waits before it asks, how many times it asks again, and how long it leaves between each asking.
 
 The files are locked before the app ever has them. You can do that with your own tool, or let the settings page do it: the locking happens in your own browser, the passphrase is made there and shown to you once, and only the sealed result reaches the server. Either way the app never has the passphrase, never encrypts and never decrypts. A stolen server or a read email yields only an encrypted blob.
 

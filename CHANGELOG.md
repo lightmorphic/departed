@@ -2,10 +2,13 @@
 
 All notable changes to Departed are recorded here.
 
+## [0.4.5] — 2026-09-05
+
+- The website explains the timings properly. The section is called "How long it waits", and after the story of the twenty-one days it says plainly that there are three numbers and you set all of them, with a word about why somebody might want longer or shorter.
+
 ## [0.4.4] — 2026-09-05
 
-- The settings page now adds your timing up and says it back in words: how often it asks, how many times it asks again, and roughly when your files would go. The three numbers were always settings; nothing in the wording says so now.
-- The website says the same. The numbers in the story are the ones it comes with, not the ones it is stuck with.
+- The settings page now adds your timing up and says it back in words: how often it asks, how many times it asks again, and roughly when your files would go. The three numbers were always settings; nothing in the wording said so.
 
 ## [0.4.3] — 2026-09-05
 
