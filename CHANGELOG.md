@@ -2,6 +2,13 @@
 
 All notable changes to Departed are recorded here.
 
+## [0.2.0] — 2026-09-05
+
+- The dashboard now asks for a password, set as `DASHBOARD_PASSWORD` in `.env`. One password, no usernames. Signing in lasts 30 days on that browser, and changing the password signs everyone out.
+- The check-in links emailed to you still work without the password, so you can always check in from a phone with one tap.
+- Repeated wrong passwords are slowed down, and every attempt is logged.
+- With no password set the switch keeps running and the emailed links keep working, but the dashboard shows a page telling you to set one.
+
 ## Unreleased
 
 - Website at departed.lightmorphic.com, served from `docs/` on GitHub Pages. Plain HTML and CSS, self-hosted Manrope, nothing loaded from anywhere else, no cookies and no analytics.

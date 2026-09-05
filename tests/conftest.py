@@ -45,7 +45,8 @@ def env(tmp_path, monkeypatch):
     monkeypatch.setenv("RECIPIENT_EMAIL", "them@example.com")
     monkeypatch.setenv("SMTP_HOST", "smtp.example.com")
     monkeypatch.setenv("SMTP_FROM", "me@example.com")
-    monkeypatch.setenv("BASE_URL", "https://departed.test")
+    monkeypatch.setenv("BASE_URL", "http://departed.test")
+    monkeypatch.setenv("DASHBOARD_PASSWORD", "open-sesame-please")
     monkeypatch.setenv("DEPARTED_DATA_DIR", str(tmp_path / "data"))
     monkeypatch.setenv("DEPARTED_ARCHIVE_DIR", str(tmp_path / "archive"))
     monkeypatch.setenv("CHECKIN_INTERVAL_DAYS", "10")
@@ -62,5 +63,8 @@ def world(env):
     app = create_app(Config(), mailer=mailer, now=clock)
     app.testing = True
     engine = app.extensions["departed"]
-    return type("W", (), {"app": app, "client": app.test_client(), "engine": engine,
-                          "clock": clock, "mailer": mailer, "archive": env / "archive"})
+    client = app.test_client()
+    client.post("/login", data={"password": "open-sesame-please"})
+    return type("W", (), {"app": app, "client": client, "engine": engine,
+                          "clock": clock, "mailer": mailer, "archive": env / "archive",
+                          "anon": app.test_client(), "password": "open-sesame-please"})

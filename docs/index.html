@@ -251,13 +251,115 @@
     </div>
   </section>
 
-  <!-- ── Run it ─────────────────────────────────────────────────── -->
+  <!-- ── Install ────────────────────────────────────────────────── -->
   <section class="run" id="run" aria-labelledby="run-h">
-    <div class="panel reveal">
-      <h2 id="run-h">Setting it up</h2>
-      <p>This part wants somebody comfortable with a home server, whether that is you or whoever looks after yours. It is a settings file and one command.</p>
-      <pre><code>docker compose up -d</code></pre>
-      <p>You put your locked files in one folder, then write two email addresses and your mail settings into the settings file. Open the page it serves and press <em>Send a test email</em>. That test posts the whole thing to you rather than to them, so you can watch it arrive before you ever rely on it.</p>
+    <div class="head reveal">
+      <h2 id="run-h">Putting it on your server</h2>
+      <p>You need a machine at home running Docker. Everything below is copy and paste, and the whole thing is two files in one folder.</p>
+    </div>
+
+    <ol class="steps">
+      <li class="reveal">
+        <h3>Make a folder for it</h3>
+        <p>The first folder holds its notes. The second is where your locked files go. The app runs as an ordinary user rather than as root, which is why the folder is handed to user 1000.</p>
+<pre><code>sudo mkdir -p /opt/departed/data /opt/departed/archive
+sudo chown -R 1000:1000 /opt/departed/data</code></pre>
+      </li>
+
+      <li class="reveal">
+        <h3>Save this as <code>/opt/departed/docker-compose.yml</code></h3>
+        <p>There is nothing to change in it. Every setting comes from the file in the next step.</p>
+<pre><code># Nothing to edit here. Every setting comes from the .env file beside it.
+services:
+  departed:
+    image: ghcr.io/lightmorphic/departed:latest
+    container_name: departed
+    restart: unless-stopped
+    ports:
+      - &quot;${DEPARTED_PORT:-4160}:8080&quot;
+    volumes:
+      - ${DEPARTED_DATA:-/opt/departed}/data:/data
+      - ${ARCHIVE_DIR:-/opt/departed/archive}:/archive:ro
+    environment:
+      OWNER_EMAIL: ${OWNER_EMAIL}
+      RECIPIENT_EMAIL: ${RECIPIENT_EMAIL}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      SMTP_FROM: ${SMTP_FROM}
+      SMTP_SECURITY: ${SMTP_SECURITY:-starttls}
+      BASE_URL: ${BASE_URL}
+      DASHBOARD_PASSWORD: ${DASHBOARD_PASSWORD}
+      CHECKIN_INTERVAL_DAYS: ${CHECKIN_INTERVAL_DAYS:-10}
+      REMINDER_COUNT: ${REMINDER_COUNT:-10}
+      REMINDER_INTERVAL_DAYS: ${REMINDER_INTERVAL_DAYS:-1}
+      TZ: ${TZ:-Europe/London}</code></pre>
+      </li>
+
+      <li class="reveal">
+        <h3>Save this as <code>/opt/departed/.env</code></h3>
+        <p>This is the only file you edit. Fill in your two email addresses, your mail server, a dashboard password, and the address you will open it at.</p>
+<pre><code># Where you get the check-in emails, and who gets the archive.
+OWNER_EMAIL=you@example.com
+RECIPIENT_EMAIL=trusted.person@example.com
+
+# Your outgoing mail server.
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USERNAME=you@example.com
+SMTP_PASSWORD=your-mail-password
+SMTP_FROM=you@example.com
+SMTP_SECURITY=starttls
+
+# The password for the dashboard. Make it long.
+DASHBOARD_PASSWORD=pick-something-long-and-private
+
+# The address the check-in links point at. It has to work from
+# wherever you read your email, so use your Tailscale address
+# rather than a name only your home network knows.
+BASE_URL=https://your-server.your-tailnet.ts.net:4160
+
+# The timing, in days.
+CHECKIN_INTERVAL_DAYS=10
+REMINDER_COUNT=10
+REMINDER_INTERVAL_DAYS=1
+
+# Where things live on the server.
+DEPARTED_PORT=4160
+DEPARTED_DATA=/opt/departed
+ARCHIVE_DIR=/opt/departed/archive
+
+TZ=Europe/London</code></pre>
+        <p class="aside">Keep this file to yourself: <code>chmod 600 /opt/departed/.env</code>. Your archive passphrase is <strong>not</strong> in here, and never should be. Departed has no use for it.</p>
+      </li>
+
+      <li class="reveal">
+        <h3>Put your locked archive in the folder</h3>
+        <p>Encrypt your files on your own computer first, with whatever you already trust. Then copy the result into <code>/opt/departed/archive</code>. One file is sent as it is. Several are put in a zip first, so you can add more later.</p>
+      </li>
+
+      <li class="reveal">
+        <h3>Start it</h3>
+<pre><code>cd /opt/departed
+docker compose up -d</code></pre>
+      </li>
+
+      <li class="reveal">
+        <h3>Open it and send yourself a test</h3>
+        <p>Go to <code>http://your-server:4160</code>, sign in with the password you chose, and press <em>Send a test email</em>. It posts the archive to you rather than to the person you named, so you can watch the whole thing arrive without setting anything off.</p>
+        <p>If a check-in email ever finds you away from home, the link in it still opens without the password, so one tap on a phone is enough.</p>
+      </li>
+    </ol>
+
+    <div class="after reveal">
+      <h3>Reaching it from outside the house</h3>
+      <p>Departed has no business being on the open internet. Put it on <a href="https://tailscale.com">Tailscale</a> and only your own devices can see it. One command shares it, and then you set <code>BASE_URL</code> to that address so the links in your emails work from your phone.</p>
+<pre><code>tailscale serve --bg --https=4160 http://127.0.0.1:4160</code></pre>
+      <h3>Keeping it up to date</h3>
+<pre><code>cd /opt/departed
+docker compose pull
+docker compose up -d</code></pre>
       <p class="cta">
         <a class="btn primary" href="https://github.com/lightmorphic/departed">Read it on GitHub</a>
         <a class="btn ghost" href="https://github.com/lightmorphic/departed#readme">Full instructions</a>
@@ -272,6 +374,20 @@
   <p><a href="https://github.com/lightmorphic/departed">Source code</a> · <a href="https://lightmorph.co.uk">Lightmorphic</a></p>
   <p class="tiny">This site sets no cookies and counts nobody.</p>
 </footer>
+
+<div class="subfoot">
+  <p>&copy; Lightmorphic Ltd. Registered in England and Wales, company number 17423646.<br>
+     Registered office: 82A James Carter Road, Mildenhall, IP28 7DE.<br>
+     <!-- Update this date whenever this page changes. -->
+     Page last updated 5 September 2026.</p>
+  <nav class="legal-nav" aria-label="Legal">
+    <a href="/privacy.html">Privacy</a>
+    <a href="/cookies.html">Cookies</a>
+    <a href="/terms.html">Terms</a>
+    <a href="/accessibility.html">Accessibility</a>
+    <a href="/complaints.html">Complaints</a>
+  </nav>
+</div>
 
 <script>
 (function () {

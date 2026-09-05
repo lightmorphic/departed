@@ -43,6 +43,7 @@ class Config:
         self.smtp_from = _str("SMTP_FROM") or self.smtp_username
         self.smtp_security = _str("SMTP_SECURITY", "starttls").lower()  # starttls | ssl | none
         self.base_url = _str("BASE_URL").rstrip("/")
+        self.dashboard_password = _str("DASHBOARD_PASSWORD")
         self.checkin_interval = timedelta(days=_float("CHECKIN_INTERVAL_DAYS", 10))
         self.reminder_count = _int("REMINDER_COUNT", 10)
         self.reminder_interval = timedelta(days=_float("REMINDER_INTERVAL_DAYS", 1))

@@ -1,8 +1,7 @@
-# Nothing to edit here. Every setting comes from .env (copy .env.example).
+# Nothing to edit here. Every setting comes from the .env file beside it.
 services:
   departed:
     image: ghcr.io/lightmorphic/departed:latest
-    build: .
     container_name: departed
     restart: unless-stopped
     ports:
@@ -20,6 +19,7 @@ services:
       SMTP_FROM: ${SMTP_FROM}
       SMTP_SECURITY: ${SMTP_SECURITY:-starttls}
       BASE_URL: ${BASE_URL}
+      DASHBOARD_PASSWORD: ${DASHBOARD_PASSWORD}
       CHECKIN_INTERVAL_DAYS: ${CHECKIN_INTERVAL_DAYS:-10}
       REMINDER_COUNT: ${REMINDER_COUNT:-10}
       REMINDER_INTERVAL_DAYS: ${REMINDER_INTERVAL_DAYS:-1}
