@@ -2,6 +2,11 @@
 
 All notable changes to Departed are recorded here.
 
+## Unreleased
+
+- Website at departed.lightmorphic.com, served from `docs/` on GitHub Pages. Plain HTML and CSS, self-hosted Manrope, nothing loaded from anywhere else, no cookies and no analytics.
+- `pytest.ini` so the test suite finds the app package when run from a clean checkout.
+
 ## [0.1.0] — 2026-09-04
 
 First working version.
