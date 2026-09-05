@@ -131,6 +131,12 @@ class Settings:
         return out
 
     @property
+    def days_to_fire(self):
+        """Days from a check-in to the archive going out, on the numbers set."""
+        total = self.checkin_interval + (self.reminder_count + 1) * self.reminder_interval
+        return total.total_seconds() / 86400
+
+    @property
     def ready(self):
         return not self.problems
 

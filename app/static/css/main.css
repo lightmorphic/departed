@@ -243,3 +243,4 @@ details.own .upload { border-top: 0; padding-top: 0; }
   .top, .foot, .actions, .hint { display: none !important; }
   .passphrase { border: 1px solid #000; color: #000; background: #fff; }
 }
+.tint.info { background: var(--info-bg); color: var(--info); }

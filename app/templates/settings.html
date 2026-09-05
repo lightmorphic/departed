@@ -76,7 +76,8 @@
         <input id="reminder_interval_days" name="reminder_interval_days" type="number" step="0.01" min="0.01" value="{{ cfg.reminder_interval_days }}">
       </div>
     </div>
-    <p class="hint">With the usual numbers, your files go out about 21 days after your last check-in. Fractions are allowed, so 0.01 is about a quarter of an hour, which is handy for testing.</p>
+    <p class="tint info" role="status">As you have it set: a check-in email every {{ days(cfg.checkin_interval.total_seconds() / 86400) }}, then {% if cfg.reminder_count %}{{ cfg.reminder_count }} reminder{{ 's' if cfg.reminder_count != 1 }} {{ days(cfg.reminder_interval.total_seconds() / 86400) }} apart{% else %}no reminders at all{% endif %}. If you answer none of them, your files go about {{ days(cfg.days_to_fire) }} after your last check-in.</p>
+    <p class="hint">All three are yours to choose. Fractions are allowed, so 0.01 is about a quarter of an hour, which is handy for testing. Nought reminders means it fires one interval after the first email, which is quick, so think before you set that.</p>
 
     <label class="field" for="timezone">Timezone</label>
     <input id="timezone" name="timezone" type="text" value="{{ cfg.timezone }}" placeholder="Europe/London">

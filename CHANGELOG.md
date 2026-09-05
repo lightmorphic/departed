@@ -2,6 +2,11 @@
 
 All notable changes to Departed are recorded here.
 
+## [0.4.4] — 2026-09-05
+
+- The settings page now adds your timing up and says it back in words: how often it asks, how many times it asks again, and roughly when your files would go. The three numbers were always settings; nothing in the wording says so now.
+- The website says the same. The numbers in the story are the ones it comes with, not the ones it is stuck with.
+
 ## [0.4.3] — 2026-09-05
 
 - The compose file is nine lines with no commentary. Anyone installing it can read a port mapping and a volume without being told what they are.

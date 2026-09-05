@@ -8,6 +8,8 @@ A dead man's switch. A small self-hosted service that emails an archive you lock
 - Ignore it and it sends the same link once a day for 10 more days.
 - Still nothing, and it emails your files to the person you chose, about 21 days after your last check-in. Once. Then it stops.
 
+Those three numbers are the ones it comes with, not the ones it is stuck with. All of them are on the settings page.
+
 The files are locked before the app ever has them. You can do that with your own tool, or let the settings page do it: the locking happens in your own browser, the passphrase is made there and shown to you once, and only the sealed result reaches the server. Either way the app never has the passphrase, never encrypts and never decrypts. A stolen server or a read email yields only an encrypted blob.
 
 Several people can share one copy. Each has their own account, their own settings, their own files and their own timer, and nobody can see anybody else's.
@@ -46,7 +48,7 @@ Signed in, you set:
 
 - Your email address, and your person's.
 - Your mail server, port, encryption, username, password and from-address. The password is stored encrypted and never shown again.
-- The timing: days between check-ins, how many reminders, and days between them. Fractions are allowed, so `0.01` is about a quarter of an hour, which is handy for testing.
+- **The timing**, all three parts of it: days between a check-in and the next asking, how many times it asks again, and the days between those. Nothing about the schedule is fixed in the code. The page adds your numbers up and tells you in words when your files would go. Fractions are allowed, so `0.01` is about a quarter of an hour, which is handy for testing.
 - The web address you open it at. Your check-in links are built from this, so it has to work from wherever you read your email.
 - Your timezone.
 - **Your files.** Either let the page seal them in your browser, or upload something you encrypted yourself. Sealed or not, the app only ever attaches what it was given.

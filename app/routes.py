@@ -39,6 +39,19 @@ def _fmt(dt, tz):
     return dt.astimezone(tz).strftime("%a %-d %b %Y, %H:%M") if dt else "never"
 
 
+def _days(n):
+    """A number of days, written the way a person would say it."""
+    if n < 1:
+        hours = n * 24
+        if hours < 1:
+            return f"{round(hours * 60)} minutes"
+        return f"{hours:.0f} hours" if abs(hours - round(hours)) < 0.05 else f"{hours:.1f} hours"
+    if abs(n - round(n)) < 0.005:
+        n = round(n)
+        return "1 day" if n == 1 else f"{n} days"
+    return f"{n:.2f} days".replace(".00", "")
+
+
 def _size(n):
     for unit in ("bytes", "KB", "MB", "GB"):
         if n < 1024 or unit == "GB":
@@ -228,6 +241,7 @@ def settings():
     cfg = switches.store(g.user.id).current()
     arc = archive.summary(cfg.archive_dir)
     return render_template("settings.html", cfg=cfg, security_choices=SECURITY_CHOICES,
+                           days=_days,
                            archive=arc, sealed_name=archive.SEALED_NAME,
                            sealed=next((f for f in arc["files"] if f["name"] == archive.SEALED_NAME), None),
                            loose=[f for f in arc["files"] if f["name"] != archive.SEALED_NAME],
