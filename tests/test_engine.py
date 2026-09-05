@@ -135,3 +135,48 @@ def test_test_email_goes_to_the_owner_with_a_zip(world, files):
     assert result.startswith("Sent")
     import io, zipfile
     assert sorted(zipfile.ZipFile(io.BytesIO(m["attachment"][1])).namelist()) == ["a.gpg", "b.gpg"]
+
+
+def test_the_timing_is_whatever_you_set_it_to(world, files):
+    """Not 10 and 10 and 1. Whatever the settings page says."""
+    (files / "a.gpg").write_bytes(b"a")
+    world.switches.store(world.user_id).set_many({
+        "checkin_interval_days": "5",
+        "reminder_count": "2",
+        "reminder_interval_days": "3",
+    })
+    cfg = world.switches.store(world.user_id).current()
+    assert cfg.days_to_fire == 5 + 3 * 3
+
+    run_days(world, 4)
+    assert world.mailer.sent == []
+    run_days(world, 1)
+    assert [m["subject"] for m in world.mailer.sent] == ["Departed: please check in"]
+
+    run_days(world, 3)
+    assert "reminder 1 of 2" in world.mailer.last()["subject"]
+    run_days(world, 3)
+    assert "reminder 2 of 2" in world.mailer.last()["subject"]
+    run_days(world, 2)
+    assert world.db.get_state(world.user_id).state == "reminding"
+
+    run_days(world, 1)
+    assert world.db.get_state(world.user_id).state == "fired"
+    fired = [e for e in world.db.recent_events(world.user_id) if e["kind"] == "fired"]
+    assert len(fired) == 1
+
+
+def test_the_timing_can_be_minutes_for_testing(world, files):
+    (files / "a.gpg").write_bytes(b"a")
+    world.switches.store(world.user_id).set_many({
+        "checkin_interval_days": "0.01",
+        "reminder_count": "1",
+        "reminder_interval_days": "0.01",
+    })
+    for _ in range(200):
+        world.clock.advance(minutes=1)
+        world.tick()
+    assert world.db.get_state(world.user_id).state == "fired"
+    subjects = [m["subject"] for m in world.mailer.sent]
+    assert "Departed: please check in" in subjects
+    assert "Departed: reminder 1 of 1 - please check in" in subjects
