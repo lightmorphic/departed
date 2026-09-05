@@ -41,6 +41,7 @@
     <nav aria-label="Main">
       <a href="#how">How it works</a>
       <a href="#sealed">What it never knows</a>
+      <a href="#app">The app</a>
       <a href="#run" class="nav-cta">Set it up</a>
     </nav>
   </header>
@@ -178,6 +179,42 @@
     </div>
   </section>
 
+  <!-- ── The app itself ─────────────────────────────────────────── -->
+  <section class="app" id="app" aria-labelledby="app-h">
+    <div class="head reveal">
+      <h2 id="app-h">One page, and everything on it</h2>
+      <p>Nothing is set up by editing files on a server. You open it in a browser, sign in, and fill in a form. This is what it looks like.</p>
+    </div>
+
+    <figure class="shot reveal">
+      <picture>
+        <source srcset="images/app-dark.png" media="(prefers-color-scheme: dark)">
+        <img src="images/app-light.png" width="1160" height="725" loading="lazy" decoding="async"
+             alt="The Departed dashboard. On the left, a panel showing the switch is waiting, with the last check-in, the next check-in email and the date it would fire, and a Check in now button. On the right, a panel listing two files that will be sent, with a Send a test email button.">
+      </picture>
+      <figcaption>The dashboard, on the day everything is quiet.</figcaption>
+    </figure>
+
+    <dl class="mishaps reveal">
+      <div>
+        <dt>The settings page</dt>
+        <dd>Your email address, your person's, your mail server, and how long the whole thing should take. The mail password is kept encrypted and never shown back to you.</dd>
+      </div>
+      <div>
+        <dt>Your files</dt>
+        <dd>Add them from your own computer, see them listed, take them away again. Lock them first: Departed carries them and never opens them.</dd>
+      </div>
+      <div>
+        <dt>Your letter</dt>
+        <dd>A few words to go in the body of the email that carries your files. This much the program can read, so it is for a greeting rather than for anything private.</dd>
+      </div>
+      <div>
+        <dt>Everybody in the house</dt>
+        <dd>Several people can share one copy. Each has their own account, their own settings, their own files and their own timer, and nobody can see anybody else's.</dd>
+      </div>
+    </dl>
+  </section>
+
   <!-- ── Bad days ───────────────────────────────────────────────── -->
   <section class="care" aria-labelledby="care-h">
     <div class="head reveal">
@@ -191,7 +228,7 @@
       </div>
       <div>
         <dt>There is nothing to send</dt>
-        <dd>It will not send an empty envelope. If the folder is bare when the day comes, it holds everything and writes to you instead, once a day, until there is something there.</dd>
+        <dd>It will not send an empty envelope. If you have not added any files when the day comes, it holds everything and writes to you instead, once a day, until there is something there.</dd>
       </div>
       <div>
         <dt>The message will not go</dt>
