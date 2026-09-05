@@ -4,11 +4,11 @@
 
 A dead man's switch. A small self-hosted service that emails an archive you locked yourself to one trusted person if you stop responding to check-in emails.
 
-- Every 10 days it emails you a check-in link. Click it and the clock resets.
-- Ignore it and it sends the same link once a day for 10 more days.
-- Still nothing, and it emails your files to the person you chose, about 21 days after your last check-in. Once. Then it stops.
+- Every so often it emails you a check-in link. Click it and the clock resets.
+- Ignore it and it sends the same link again, as many times as you asked for.
+- Still nothing, and it emails your files to the person you chose. Once. Then it stops.
 
-Those are the timings it arrives with. You set all three yourself on the settings page: how long it waits before it asks, how many times it asks again, and how long it leaves between each asking.
+You set the timings: how long it waits before it asks, how many times it asks again, and how long it leaves between each asking. A month, then four reminders a week apart, is as reasonable as ten days with ten daily reminders, which is what it comes set to. The settings page adds your numbers up and tells you in plain words when your files would go.
 
 The files are locked before the app ever has them. You can do that with your own tool, or let the settings page do it: the locking happens in your own browser, the passphrase is made there and shown to you once, and only the sealed result reaches the server. Either way the app never has the passphrase, never encrypts and never decrypts. A stolen server or a read email yields only an encrypted blob.
 

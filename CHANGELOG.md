@@ -2,9 +2,9 @@
 
 All notable changes to Departed are recorded here.
 
-## [0.4.5] — 2026-09-05
+## [0.4.6] — 2026-09-05
 
-- The website explains the timings properly. The section is called "How long it waits", and after the story of the twenty-one days it says plainly that there are three numbers and you set all of them, with a word about why somebody might want longer or shorter.
+- No particular schedule is stated anywhere on the website or in the README any more. The steps describe what happens rather than when: it asks as often as you told it to, asks again as many times as you asked for, and sends when the asking runs out. One worked example is given as an example, and nothing else assumes a number.
 
 ## [0.4.4] — 2026-09-05
 
