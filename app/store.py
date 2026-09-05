@@ -147,6 +147,24 @@ class Settings:
     def checkin_url(self, token):
         return f"{self.base_url}/checkin/{token}"
 
+    @property
+    def example_checkin_url(self):
+        """What a link in your emails will look like."""
+        return self.checkin_url("k3f9x2...") if self.base_url else ""
+
+    @property
+    def base_url_is_local(self):
+        """True when the address would only work on this network, which means
+        the links in the emails will not open on a phone away from home."""
+        if not self.base_url:
+            return False
+        host = self.base_url.split("://", 1)[-1].split("/")[0].split(":")[0].lower()
+        if host in ("localhost", "0.0.0.0", "::1", "[::1]"):
+            return True
+        if host.startswith("127.") or host.startswith("192.168.") or host.startswith("10."):
+            return True
+        return "." not in host
+
 
 class SettingsStore:
     """Reads and writes one person's settings."""

@@ -35,6 +35,14 @@ def _secure_cookie(cfg):
     return bool(cfg.base_url.startswith("https")) or request.is_secure
 
 
+def _origin():
+    """The address this browser is using, which is the one thing the app cannot
+    work out for itself: it only ever sees requests arriving on its own machine."""
+    scheme = request.headers.get("X-Forwarded-Proto", request.scheme).split(",")[0].strip()
+    host = request.headers.get("X-Forwarded-Host", request.host).split(",")[0].strip()
+    return f"{scheme}://{host}"
+
+
 def _fmt(dt, tz):
     return dt.astimezone(tz).strftime("%a %-d %b %Y, %H:%M") if dt else "never"
 
@@ -241,7 +249,7 @@ def settings():
     cfg = switches.store(g.user.id).current()
     arc = archive.summary(cfg.archive_dir)
     return render_template("settings.html", cfg=cfg, security_choices=SECURITY_CHOICES,
-                           days=_days,
+                           days=_days, here=_origin(),
                            archive=arc, sealed_name=archive.SEALED_NAME,
                            sealed=next((f for f in arc["files"] if f["name"] == archive.SEALED_NAME), None),
                            loose=[f for f in arc["files"] if f["name"] != archive.SEALED_NAME],

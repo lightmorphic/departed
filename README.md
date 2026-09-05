@@ -49,7 +49,7 @@ Signed in, you set:
 - Your email address, and your person's.
 - Your mail server, port, encryption, username, password and from-address. The password is stored encrypted and never shown again.
 - **The timing**, all three parts of it: days between a check-in and the next asking, how many times it asks again, and the days between those. Nothing about the schedule is fixed in the code. The page adds your numbers up and tells you in words when your files would go. Fractions are allowed, so `0.01` is about a quarter of an hour, which is handy for testing.
-- The web address you open it at. Your check-in links are built from this, so it has to work from wherever you read your email.
+- **The web address you open it at.** This is the only thing the app cannot work out for itself: it sits behind whatever you put in front of it and only ever sees requests arriving on its own machine, so it never learns the name you reach it on. It builds the check-in links itself, as that address followed by `/checkin/` and a long single-use token. The box arrives filled in with the address your browser is using, and it warns you if that address would only work at home.
 - Your timezone.
 - **Your files.** Either let the page seal them in your browser, or upload something you encrypted yourself. Sealed or not, the app only ever attaches what it was given.
 - **Your letter.** A few words that go in the body of the email carrying your files. It is stored encrypted at rest but the app can read it, unlike your files, so keep anything private inside the locked files instead.

@@ -2,6 +2,11 @@
 
 All notable changes to Departed are recorded here.
 
+## [0.4.8] — 2026-09-05
+
+- The web address setting explains itself and fills itself in. It now says why it exists at all: the app only ever sees requests arriving on its own machine, so the address you reach it on is the one thing it cannot work out. The box arrives filled with the address your browser is using, there is a button to put it back, and it shows what a check-in link built from it will look like.
+- If the address would only work at home, it says so, because a link built from it will not open on a phone.
+
 ## [0.4.7] — 2026-09-05
 
 **Fixes a crash on first run.** If the folder you mounted belonged to root, which is what happens when a Docker manager makes it for you, the app could not write to it and stopped at once with a database error and nothing useful to say. The web address in front of it then returned a 502, because there was nothing behind it.
