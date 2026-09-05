@@ -299,7 +299,7 @@
   <section class="run" id="run" aria-labelledby="run-h">
     <div class="head reveal">
       <h2 id="run-h">Putting it on your server</h2>
-      <p>You need a machine at home running Docker. There is nothing to configure on the server: two short files, one command, and everything else is done in the browser afterwards.</p>
+      <p>You need a machine at home running Docker. There is nothing to configure on the server: one short file, one command, and everything else is done in the browser afterwards.</p>
     </div>
 
     <ol class="steps">
@@ -312,36 +312,22 @@ sudo chown -R 1000:1000 /opt/departed</code></pre>
 
       <li class="reveal">
         <h3>Save this as <code>/opt/departed/docker-compose.yml</code></h3>
-        <p>There is nothing to change in it, and no settings in it. Notice what is missing: no email addresses, no mail server, no passwords.</p>
-<pre><code># Nothing in here is a setting. Email addresses, the mail server, the timing and
-# your files all live inside the app, on its settings page.
+        <p>That is the whole of the server side. There is no settings file to fill in, and nothing secret in it. Notice what is missing: no email addresses, no mail server, no passwords.</p>
+<pre><code># The whole of the server-side setup. Everything else, including your email
+# addresses, your mail server and your files, is set in the app itself.
+#
+#   4160        the port you open in a browser. Change it if it is taken.
+#   /opt/departed   the folder holding the database, your files and the log.
+#                   Back that folder up and you have everything.
 services:
   departed:
     image: ghcr.io/lightmorphic/departed:latest
     container_name: departed
     restart: unless-stopped
     ports:
-      - &quot;${DEPARTED_PORT:-4160}:8080&quot;
+      - &quot;4160:8080&quot;
     volumes:
-      - ${DEPARTED_DATA:-/opt/departed}:/data</code></pre>
-      </li>
-
-      <li class="reveal">
-        <h3>Save this as <code>/opt/departed/.env</code></h3>
-        <p>Two lines, and neither is a secret. Change the port if something else is already using it.</p>
-<pre><code># Copy this to .env. There are only two things here, and neither is a secret.
-# Everything else is set on the app&#x27;s own settings page in the browser.
-
-# The port you open in the browser: http://&lt;your-server&gt;:4160
-DEPARTED_PORT=4160
-
-# The folder on the server that holds the database, your files and the log.
-# Back this folder up and you have everything.
-DEPARTED_DATA=/opt/departed
-
-# Optional. Largest single upload, in megabytes. Most mail servers refuse
-# attachments over about 25 MB anyway.
-# MAX_UPLOAD_MB=64</code></pre>
+      - /opt/departed:/data</code></pre>
       </li>
 
       <li class="reveal">

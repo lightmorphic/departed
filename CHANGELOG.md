@@ -2,6 +2,10 @@
 
 All notable changes to Departed are recorded here.
 
+## [0.4.2] — 2026-09-05
+
+- The `.env` file is gone. The port and the folder sit in the compose file itself, which is now the whole of the server-side setup: one file, twelve lines, nothing secret in it and nothing to fill in.
+
 ## [0.4.1] — 2026-09-05
 
 - **What gets sent is now a single file that opens itself.** The recipient saves it, double-clicks it, and types the passphrase. It opens in whatever browser their computer already has, lists the files, and saves them. Nothing to install, on Windows, a Mac or Linux, and no internet connection needed: the file carries both the sealed archive and the code that opens it, and reaches out to nothing.
