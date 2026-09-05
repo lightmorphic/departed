@@ -24,7 +24,6 @@ You need Docker. There are no settings in the compose file: everything is set in
 ```bash
 sudo mkdir -p /opt/departed
 sudo chown -R 1000:1000 /opt/departed
-cp .env.example .env
 docker compose up -d
 ```
 
@@ -32,14 +31,14 @@ Open `http://<your-server>:4160`. The first visit asks you to make an account, a
 
 The app runs as user 1000 inside the container, which is why the folder is owned by 1000 on the host.
 
-### The only two settings on the server
+### The only two things on the server
 
-| Setting | What it does | Default |
-|---|---|---|
-| `DEPARTED_PORT` | Port you open in the browser | `4160` |
-| `DEPARTED_DATA` | Host folder holding the database, your files and the log | `/opt/departed` |
+There is no `.env` file and nothing to fill in. The compose file is the whole of it, and it holds two facts:
 
-`MAX_UPLOAD_MB` (default 64) caps a single upload. `SECRET_KEY` is optional: set it and it is used to encrypt stored secrets instead of the key file the app makes for itself.
+- `4160:8080` is the port you open in a browser. Change the `4160` if something else is using it.
+- `/opt/departed:/data` is the folder on the server holding the database, your files and the log. Back that folder up and you have everything.
+
+Two optional environment lines exist if you ever want them. `MAX_UPLOAD_MB` (default 64) caps a single upload, and `SECRET_KEY` is used to encrypt stored secrets instead of the key file the app makes for itself.
 
 ### Everything else is on the settings page
 

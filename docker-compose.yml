@@ -1,11 +1,15 @@
-# Nothing in here is a setting. Email addresses, the mail server, the timing and
-# your files all live inside the app, on its settings page.
+# The whole of the server-side setup. Everything else, including your email
+# addresses, your mail server and your files, is set in the app itself.
+#
+#   4160        the port you open in a browser. Change it if it is taken.
+#   /opt/departed   the folder holding the database, your files and the log.
+#                   Back that folder up and you have everything.
 services:
   departed:
     image: ghcr.io/lightmorphic/departed:latest
     container_name: departed
     restart: unless-stopped
     ports:
-      - "${DEPARTED_PORT:-4160}:8080"
+      - "4160:8080"
     volumes:
-      - ${DEPARTED_DATA:-/opt/departed}:/data
+      - /opt/departed:/data
