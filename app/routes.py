@@ -1,6 +1,8 @@
-from flask import Blueprint, current_app, jsonify, redirect, render_template, request
+from flask import (Blueprint, current_app, jsonify, make_response, redirect,
+                   render_template, request)
 
 from . import archive
+from .auth import COOKIE, SESSION_DAYS
 from .config import VERSION
 
 bp = Blueprint("main", __name__)
@@ -16,6 +18,66 @@ def _engine():
     return current_app.extensions["departed"]
 
 
+def _auth():
+    return current_app.extensions["departed_auth"]
+
+
+def _who():
+    return request.headers.get("X-Forwarded-For", request.remote_addr or "?").split(",")[0].strip()
+
+
+OPEN_ENDPOINTS = {"main.login", "main.do_login", "main.checkin_link", "main.health", "static"}
+
+
+@bp.before_app_request
+def require_password():
+    """Everything but the emailed check-in link and the login page needs the password."""
+    if request.endpoint in OPEN_ENDPOINTS:
+        return None
+    auth = _auth()
+    if not auth.enabled:
+        return render_template("locked.html"), 503
+    if auth.cookie_is_valid(request.cookies.get(COOKIE)):
+        return None
+    return redirect("/login")
+
+
+@bp.get("/login")
+def login():
+    auth = _auth()
+    if not auth.enabled:
+        return render_template("locked.html"), 503
+    if auth.cookie_is_valid(request.cookies.get(COOKIE)):
+        return redirect("/")
+    return render_template("login.html", error=None, wait=auth.locked_for(_who()))
+
+
+@bp.post("/login")
+def do_login():
+    auth = _auth()
+    if not auth.enabled:
+        return render_template("locked.html"), 503
+    who = _who()
+    wait = auth.locked_for(who)
+    if wait:
+        return render_template("login.html", error="Too many attempts.", wait=wait), 429
+    if not auth.check_password(request.form.get("password", ""), who):
+        return render_template("login.html", error="That password is not right.",
+                               wait=auth.locked_for(who)), 401
+    resp = make_response(redirect("/"))
+    resp.set_cookie(COOKIE, auth.new_cookie_value(), max_age=SESSION_DAYS * 86400,
+                    httponly=True, samesite="Lax",
+                    secure=_engine().cfg.base_url.startswith("https"))
+    return resp
+
+
+@bp.post("/logout")
+def logout():
+    resp = make_response(redirect("/login"))
+    resp.delete_cookie(COOKIE)
+    return resp
+
+
 def _fmt(dt, tz):
     return dt.astimezone(tz).strftime("%a %-d %b %Y, %H:%M") if dt else "never"
 
@@ -29,7 +91,9 @@ def _size(n):
 
 @bp.app_context_processor
 def inject():
-    return {"app_version": VERSION}
+    auth = current_app.extensions["departed_auth"]
+    return {"app_version": VERSION,
+            "show_logout": auth.enabled and auth.cookie_is_valid(request.cookies.get(COOKIE))}
 
 
 @bp.get("/")

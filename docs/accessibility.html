@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Accessibility - Departed</title>
+<meta name="description" content="What has been done to make this site usable, what was tested, what is known not to work, and how to report a barrier.">
+<link rel="canonical" href="https://departed.lightmorphic.com/accessibility.html">
+<meta name="theme-color" content="#05070c">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Departed">
+<meta property="og:title" content="Accessibility - Departed">
+<meta property="og:description" content="What has been done to make this site usable, what was tested, what is known not to work, and how to report a barrier.">
+<meta property="og:url" content="https://departed.lightmorphic.com/accessibility.html">
+<meta property="og:image" content="https://departed.lightmorphic.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A single warm light on a dark horizon at dusk.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="topstack">
+  <p class="beta"><span class="tag">Beta</span> Departed is new, and nobody has run it for long. Try it, read the code, tell me what breaks. Do not trust it yet with something that matters.</p>
+  <header class="site">
+    <a class="brand" href="/">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".45"/><circle cx="12" cy="12" r="3.4" fill="currentColor"/></svg>
+      <span>Departed</span>
+    </a>
+    <nav aria-label="Main">
+      <a href="/#how">How it works</a>
+      <a href="/#sealed">What it never knows</a>
+      <a href="/#run" class="nav-cta">Set it up</a>
+    </nav>
+  </header>
+</div>
+
+<main id="main" class="doc">
+  <h1>Accessibility</h1>
+  <p class="stamp">This statement is about departed.lightmorphic.com. It was written after testing, not before.</p>
+
+  <h2>What we aim for</h2>
+  <p>We aim to meet the Web Content Accessibility Guidelines 2.1 at level AA. We believe this site meets that standard, with the exception noted below.</p>
+
+  <h2>What has been done</h2>
+  <ul>
+    <li>Every piece of text was checked against its background for contrast, in both the light and the dark version of the site, and all of it passes AA.</li>
+    <li>The page works with the keyboard alone, and the focus outline is always visible and never removed.</li>
+    <li>There is a skip link to the main content as the first thing you reach.</li>
+    <li>Headings run in order, the page declares its language, and the drawings are marked as decoration so a screen reader passes over them rather than describing shapes.</li>
+    <li>Every animation stops if your system is set to reduce motion. Nothing is hidden when it stops, and nothing depends on movement to be understood.</li>
+    <li>The layout was walked from 320 pixels wide up to 1600 in small steps, and never scrolls sideways or overlaps.</li>
+    <li>Colour is never the only way something is signalled.</li>
+    <li>Text can be resized in the browser without anything being cut off.</li>
+  </ul>
+
+  <h2>What is known not to work</h2>
+  <ul>
+    <li>The install instructions include blocks of configuration that scroll sideways on a narrow screen. That is the nature of the content, and each block is reachable and readable with a keyboard, but it is not comfortable on a phone. If you would like the setup instructions in another format, ask and we will send them.</li>
+    <li>The site has not yet been tested by a person who uses a screen reader daily. Automated checks and manual keyboard testing are not the same thing as that, and we would welcome the correction.</li>
+  </ul>
+
+  <h2>The Departed software</h2>
+  <p>The dashboard you install follows the same rules as this site, but it has had less testing. If you hit a barrier in the program itself, that is a bug worth reporting, and it will be treated as one.</p>
+
+  <h2>Telling us about a problem</h2>
+  <p>If something here is unusable for you, email <a href="mailto:complaints@lightmorphic.com">complaints@lightmorphic.com</a>. Say what page you were on and what happened. We aim to reply within five working days and to say plainly whether we can fix it and when.</p>
+  <p>This statement was prepared on 5 September 2026, based on testing carried out on that date.</p>
+  <p class="back"><a href="/">Back to Departed</a></p>
+</main>
+
+<footer class="site-foot">
+  <p><strong>Departed</strong> is a Lightmorphic project, free and open source under the GPL&nbsp;3.0.</p>
+  <p><a href="https://github.com/lightmorphic/departed">Source code</a> · <a href="https://lightmorph.co.uk">Lightmorphic</a></p>
+</footer>
+
+<div class="subfoot">
+  <p>&copy; Lightmorphic Ltd. Registered in England and Wales, company number 17423646.<br>
+     Registered office: 82A James Carter Road, Mildenhall, IP28 7DE.<br>
+     <!-- Update this date whenever this page changes. -->
+     Page last updated 5 September 2026.</p>
+  <nav class="legal-nav" aria-label="Legal">
+    <a href="/privacy.html">Privacy</a>
+    <a href="/cookies.html">Cookies</a>
+    <a href="/terms.html">Terms</a>
+    <a href="/accessibility.html">Accessibility</a>
+    <a href="/complaints.html">Complaints</a>
+  </nav>
+</div>
+</body>
+</html>

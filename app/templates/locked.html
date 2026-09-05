@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block title %}Set a password - Departed{% endblock %}
+{% block content %}
+<section class="panel gate">
+  <h1 class="gate-h">Set a password</h1>
+  <p class="tint warning">! No dashboard password is set, so the dashboard is locked.</p>
+  <p>Add a line to your <code>.env</code> file and start the container again:</p>
+  <pre><code>DASHBOARD_PASSWORD=something-long-and-private</code></pre>
+  <p class="hint gate-note">The switch itself is still running. The timer keeps counting and the check-in links emailed to you still work, so nothing has been lost.</p>
+</section>
+{% endblock %}

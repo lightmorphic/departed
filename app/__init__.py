@@ -5,6 +5,7 @@ from logging.handlers import RotatingFileHandler
 
 from flask import Flask
 
+from .auth import Auth
 from .config import VERSION, Config
 from .db import Database
 from .engine import Engine, utcnow
@@ -37,12 +38,17 @@ def create_app(cfg=None, mailer=None, now=utcnow, start_scheduler=False):
     app = Flask(__name__)
     app.config["MAX_CONTENT_LENGTH"] = 64 * 1024
     app.extensions["departed"] = engine
+    app.extensions["departed_auth"] = Auth(cfg)
 
     from .routes import bp
     app.register_blueprint(bp)
 
     for p in cfg.problems:
         logging.getLogger("departed").error("Configuration problem: %s", p)
+    if not cfg.dashboard_password:
+        logging.getLogger("departed").error(
+            "DASHBOARD_PASSWORD is not set. The timer still runs and the emailed "
+            "check-in links still work, but the dashboard is locked.")
 
     if start_scheduler:
         def loop():

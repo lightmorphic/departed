@@ -285,7 +285,7 @@ section { padding-inline: clamp(1.25rem, 4vw, 3rem); }
 }
 
 /* ── Creed ──────────────────────────────────────────────────────── */
-.opening { padding-block: clamp(4.5rem, 12vh, 8rem); max-width: 58rem; }
+.opening { padding-block: clamp(4.5rem, 12vh, 8rem); }
 .opening p {
   max-width: 34rem;
   font-size: clamp(1.3125rem, 2.7vw, 1.75rem);
@@ -293,14 +293,14 @@ section { padding-inline: clamp(1.25rem, 4vw, 3rem); }
 }
 
 /* ── Timeline ───────────────────────────────────────────────────── */
-.how { padding-block: 0 clamp(4rem, 9vh, 7rem); max-width: 58rem; }
+.how { padding-block: 0 clamp(4rem, 9vh, 7rem); }
 .head { max-width: 38rem; margin-bottom: clamp(2.5rem, 6vh, 4rem); }
 .head h2, .sealed h2, .home h2, .run h2 {
   font-size: clamp(1.75rem, 3.6vw, 2.625rem); letter-spacing: -.03em;
 }
 .head p { margin-top: 1rem; color: var(--fg-soft); }
 
-.timeline { list-style: none; margin: 0; padding: 0; }
+.timeline { list-style: none; margin: 0; padding: 0; max-width: 46rem; }
 .step { display: grid; grid-template-columns: 2.25rem 1fr; gap: clamp(1.25rem, 3vw, 2.25rem); }
 .rail { position: relative; display: block; }
 .rail::before {
@@ -388,22 +388,46 @@ section { padding-inline: clamp(1.25rem, 4vw, 3rem); }
 .mishaps dt { font-weight: 700; font-size: 1.0625rem; }
 .mishaps dd { margin: .5rem 0 0; color: var(--fg-soft); font-size: .9688rem; }
 
-/* ── Run it ─────────────────────────────────────────────────────── */
-.run { padding-block: clamp(1.5rem, 3vh, 2.5rem) clamp(3.5rem, 8vh, 5rem); }
-.run .panel {
-  background: var(--panel); border: 1px solid var(--panel-border);
-  border-radius: var(--panel-radius); padding: clamp(1.75rem, 4vw, 3rem);
-  max-width: 46rem; margin-inline: auto;
+/* ── Install ────────────────────────────────────────────────────── */
+.run { padding-block: clamp(2rem, 5vh, 3.5rem) clamp(3.5rem, 8vh, 5rem); }
+.run p { margin-top: .875rem; color: var(--fg-soft); }
+.run .head p { margin-top: 1rem; }
+
+.steps { list-style: none; margin: 0; padding: 0; counter-reset: step; max-width: 48rem; }
+.steps > li {
+  counter-increment: step;
+  position: relative; padding: 0 0 clamp(2rem, 4vh, 2.75rem) 3.25rem;
 }
-.run p { margin-top: 1rem; color: var(--fg-soft); }
+.steps > li::before {
+  content: counter(step);
+  position: absolute; left: 0; top: 0;
+  color: var(--accent-text); font-weight: 700; font-size: 1.125rem;
+  font-variant-numeric: tabular-nums;
+}
+.steps h3, .after h3 { font-size: 1.125rem; font-weight: 600; letter-spacing: -.015em; }
+.after h3 { margin-top: 2rem; }
+.after h3:first-child { margin-top: 0; }
+.steps h3 code, .run p code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: .875em; background: var(--muted); padding: .1em .35em; border-radius: .35em;
+  overflow-wrap: anywhere;
+}
 .run pre {
-  margin: 1.5rem 0 0; padding: 1rem 1.25rem; overflow-x: auto;
-  background: var(--bg-deep); border: 1px solid var(--rule);
-  border-radius: var(--radius);
+  margin: 1.125rem 0 0; padding: 1rem 1.125rem; overflow-x: auto;
+  background: var(--panel); border: 1px solid var(--panel-border);
+  border-radius: var(--radius); box-shadow: var(--shadow-panel);
 }
-.run code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .9375rem; color: var(--fg); }
-.run .hint { font-size: .9375rem; }
-.run .cta { margin-top: 2rem; }
+.run pre code {
+  display: block; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: .8125rem; line-height: 1.7; color: var(--fg); white-space: pre; background: none; padding: 0;
+}
+.run .aside { font-size: .9375rem; }
+.after { border-top: 1px solid var(--rule); padding-top: clamp(2rem, 4vh, 2.75rem); max-width: 48rem; }
+.after .cta { margin-top: 2rem; }
+@media (max-width: 34rem) {
+  .steps > li { padding-left: 0; padding-top: 3rem; }
+  .steps > li::before { top: 0; }
+}
 
 
 /* ── Footer ─────────────────────────────────────────────────────── */
@@ -428,3 +452,35 @@ section { padding-inline: clamp(1.25rem, 4vw, 3rem); }
   .ring { opacity: .3; }
   .hill { transform: none; }
 }
+
+/* ── Legal sub-footer ───────────────────────────────────────────── */
+.subfoot {
+  border-top: 1px solid var(--rule);
+  padding: 1.75rem clamp(1.25rem, 4vw, 3rem) 2.5rem;
+  max-width: 74rem; margin-inline: auto;
+  color: var(--muted-fg); font-size: .8125rem; line-height: 1.7;
+}
+.subfoot .legal-nav { margin-top: .875rem; display: flex; flex-wrap: wrap; gap: .375rem 1.5rem; }
+.subfoot a { display: inline-block; padding: .3125rem 0; color: var(--fg-soft); text-decoration-color: var(--rule); text-underline-offset: 3px; }
+.subfoot a:hover { color: var(--fg); text-decoration-color: var(--accent); }
+
+/* ── Legal and error pages ──────────────────────────────────────── */
+.doc {
+  max-width: 44rem; margin-inline: auto;
+  padding: clamp(9rem, 20vh, 12rem) clamp(1.25rem, 4vw, 3rem) clamp(3.5rem, 8vh, 5rem);
+}
+.doc h1 { font-size: clamp(1.875rem, 4vw, 2.5rem); letter-spacing: -.03em; }
+.doc .stamp { margin-top: .75rem; color: var(--muted-fg); font-size: .875rem; }
+.doc h2 {
+  font-size: 1.25rem; font-weight: 600; letter-spacing: -.015em;
+  margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--rule);
+}
+.doc p, .doc li { color: var(--fg-soft); }
+.doc p { margin-top: 1rem; }
+.doc ul { margin: 1rem 0 0; padding-left: 1.25rem; }
+.doc li { margin-top: .5rem; }
+.doc .back { margin-top: 3rem; }
+.doc .back a { display: inline-block; padding: .625rem 0; font-weight: 600; }
+.doc code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .875em; background: var(--panel); padding: .1em .4em; border-radius: .35em; }
+.doc .lede-p { color: var(--fg); font-size: 1.125rem; }
+.notfound { text-align: left; }

@@ -21,7 +21,7 @@ cp .env.example .env
 docker compose up -d
 ```
 
-Put your encrypted archive in `/opt/departed/archive`, then open `http://<your-server>:4160` and press **Send a test email**. You get exactly what the recipient would get, so you can prove the whole path works without firing anything.
+Put your encrypted archive in `/opt/departed/archive`, then open `http://<your-server>:4160`, sign in with your `DASHBOARD_PASSWORD`, and press **Send a test email**. You get exactly what the recipient would get, so you can prove the whole path works without firing anything.
 
 The app runs as user 1000 inside the container, which is why the data folder is owned by 1000 on the host. The archive folder is mounted read-only.
 
@@ -34,6 +34,7 @@ The app runs as user 1000 inside the container, which is why the data folder is 
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM` | Outbound mail | required |
 | `SMTP_SECURITY` | `starttls`, `ssl` or `none` | `starttls` |
 | `BASE_URL` | Address the check-in links point at | required |
+| `DASHBOARD_PASSWORD` | Password for the dashboard. Make it long | required |
 | `CHECKIN_INTERVAL_DAYS` | Days between successful check-in and the next check-in email | `10` |
 | `REMINDER_COUNT` | Reminders after the first check-in email | `10` |
 | `REMINDER_INTERVAL_DAYS` | Days between reminders, and between the last reminder and firing | `1` |
@@ -50,12 +51,21 @@ One file is attached as-is. Several files are zipped, uncompressed, keeping fold
 
 If the folder is empty when the switch is due to fire, it does not fire. It emails you an alert once a day instead, and fires as soon as files appear.
 
+### Signing in
+
+The dashboard asks for one password, set as `DASHBOARD_PASSWORD` in `.env`. There are no usernames and no accounts. Signing in lasts 30 days on that browser, and changing the password signs every browser out.
+
+The check-in links emailed to you deliberately do **not** ask for it. They carry their own long single-use token and have to work with one tap from a phone. Repeated wrong passwords are slowed down and every attempt is logged.
+
+If you leave `DASHBOARD_PASSWORD` empty, the switch still runs and the emailed links still work, but the dashboard shows a page telling you to set one.
+
 ### What the dashboard shows
 
 Current state (waiting, reminding, fired), last check-in, next check-in email, how many reminders have gone, roughly when it would fire, what is in the archive folder and when it last changed, a **Check in now** button, a **Send a test email** button, and a log of every check-in, reminder, alert, error and firing.
 
 ### Things it is careful about
 
+- **The dashboard is behind a password**, and the emailed check-in link is not, on purpose.
 - **The link is single-use.** A fresh token is issued for each check-in cycle and cleared when used. An old email cannot reset the timer. The token is stored hashed.
 - **Firing that fails is retried** every five minutes, for ever, logged as an error each time. It is never marked sent until the mail server accepts it.
 - **State survives restarts.** Everything is in `data/departed.db` on the mounted volume.
@@ -71,7 +81,7 @@ docker compose down
 docker compose up -d
 ```
 
-If you build locally instead, use `docker compose up -d --build`.
+The compose file pulls a published image, so there is nothing to build. If you would rather build it yourself, clone the repo and run `docker build -t departed .`, then point `image:` at your own tag.
 
 ## Access
 
