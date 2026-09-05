@@ -120,3 +120,46 @@ def test_changing_your_password(world):
 
 def test_health_is_open(world):
     assert world.anon.get("/health").get_json()["ok"] is True
+
+
+def test_the_web_address_is_offered_rather_than_asked_for(world):
+    """The app cannot know what address you reach it on, so it offers the one
+    the browser is using rather than leaving an empty box."""
+    world.switches.store(world.user_id).set("base_url", "")
+    page = world.client.get("/settings").get_data(as_text=True)
+    assert 'value="http://localhost"' in page
+    assert "Use the address I am on now" in page
+
+
+def test_it_believes_the_proxy_about_the_address(world):
+    """Behind a tunnel or a proxy the app is reached on https at a name it never
+    sees, so the forwarded headers are what it offers."""
+    from app.routes import _origin
+    with world.app.test_request_context("/settings", headers={
+            "Host": "127.0.0.1:8080",
+            "X-Forwarded-Proto": "https",
+            "X-Forwarded-Host": "departed.example.com"}):
+        assert _origin() == "https://departed.example.com"
+    with world.app.test_request_context("/settings", headers={"Host": "box.local:4160"}):
+        assert _origin() == "http://box.local:4160"
+
+
+def test_it_warns_when_the_address_only_works_at_home(world):
+    store = world.switches.store(world.user_id)
+    for local in ("http://localhost:4160", "http://127.0.0.1:4160", "http://homelab:4160",
+                  "http://192.168.1.20:4160"):
+        store.set("base_url", local)
+        assert store.current().base_url_is_local is True
+        assert "only works on this network" in world.client.get("/settings").get_data(as_text=True)
+
+    for reachable in ("https://departed.example.com", "https://homelab.something.ts.net:4160"):
+        store.set("base_url", reachable)
+        assert store.current().base_url_is_local is False
+        assert "only works on this network" not in world.client.get("/settings").get_data(as_text=True)
+
+
+def test_it_shows_what_a_check_in_link_will_look_like(world):
+    store = world.switches.store(world.user_id)
+    store.set("base_url", "https://departed.example.com")
+    assert store.current().example_checkin_url.startswith("https://departed.example.com/checkin/")
+    assert "https://departed.example.com/checkin/" in world.client.get("/settings").get_data(as_text=True)

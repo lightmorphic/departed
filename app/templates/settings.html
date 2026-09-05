@@ -86,9 +86,22 @@
 
   <section class="panel" aria-labelledby="url-h">
     <h2 id="url-h" class="panel-h">The web address</h2>
+    <p class="hint">Departed only ever sees requests arriving on its own machine, so it cannot work out the address you reach it on. That is the one thing it has to be told. It builds the check-in links itself from here.</p>
+
     <label class="field" for="base_url">Address you open this at</label>
-    <input id="base_url" name="base_url" type="url" value="{{ cfg.base_url }}" placeholder="https://departed.example.com">
-    <p class="hint">Your check-in links are built from this, so it has to work from wherever you read your email, not only from inside the house. How you make that happen is up to you.</p>
+    <input id="base_url" name="base_url" type="url" value="{{ cfg.base_url or here }}" placeholder="https://departed.example.com">
+    <div class="actions">
+      <button class="btn small" type="button" id="use-here" data-here="{{ here }}">Use the address I am on now</button>
+      <span class="hint">Right now that is <code>{{ here }}</code></span>
+    </div>
+
+    {% if cfg.base_url %}
+    <p class="hint">Links in your emails look like <code>{{ cfg.example_checkin_url }}</code></p>
+    {% endif %}
+    {% if cfg.base_url_is_local %}
+    <p class="tint warning">! That address only works on this network. A check-in link built from it will not open on a phone away from home. Use whatever address you reach this on from outside.</p>
+    {% endif %}
+
     <div class="actions"><button class="btn primary" type="submit">Save settings</button></div>
   </section>
 </form>
@@ -173,6 +186,13 @@
     <div class="actions"><button class="btn" type="submit">Change password</button></div>
   </form>
 </section>
+<script>
+(function () {
+  var b = document.getElementById('use-here');
+  var box = document.getElementById('base_url');
+  if (b && box) b.addEventListener('click', function () { box.value = b.dataset.here; box.focus(); });
+})();
+</script>
 <script src="{{ url_for('static', filename='js/seal.js') }}?v={{ app_version }}"></script>
 <script src="{{ url_for('static', filename='js/files.js') }}?v={{ app_version }}"></script>
 {% endblock %}
