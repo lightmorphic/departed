@@ -1,5 +1,5 @@
 from flask import (Blueprint, abort, current_app, g, jsonify, make_response,
-                   redirect, render_template, request)
+                   redirect, render_template, request, send_file)
 
 from . import archive
 from .auth import COOKIE, SESSION_DAYS
@@ -16,7 +16,7 @@ STATE_WORDS = {
 }
 
 OPEN_ENDPOINTS = {"main.setup", "main.do_setup", "main.login", "main.do_login",
-                  "main.checkin_link", "main.health", "static"}
+                  "main.checkin_link", "main.health", "main.open_page", "static"}
 
 
 def _switches():
@@ -209,6 +209,12 @@ def test_email():
     return redirect("/?done=test")
 
 
+@bp.get("/open")
+def open_page():
+    """Opens a sealed archive in the browser. Nothing is uploaded."""
+    return render_template("open.html")
+
+
 @bp.get("/health")
 def health():
     return jsonify(ok=True, version=VERSION, accounts=_switches().db.any_users())
@@ -220,8 +226,12 @@ def health():
 def settings():
     switches = _switches()
     cfg = switches.store(g.user.id).current()
+    arc = archive.summary(cfg.archive_dir)
     return render_template("settings.html", cfg=cfg, security_choices=SECURITY_CHOICES,
-                           archive=archive.summary(cfg.archive_dir), size=_size,
+                           archive=arc, sealed_name=archive.SEALED_NAME,
+                           sealed=next((f for f in arc["files"] if f["name"] == archive.SEALED_NAME), None),
+                           loose=[f for f in arc["files"] if f["name"] != archive.SEALED_NAME],
+                           size=_size,
                            fmt=lambda dt: _fmt(dt, cfg.tz),
                            max_mb=current_app.extensions["departed_boot"].max_upload_mb,
                            done=request.args.get("done"), error=request.args.get("error"))
@@ -281,11 +291,37 @@ def upload_files():
     return redirect("/settings?done=uploaded")
 
 
+@bp.get("/files/sealed")
+def get_sealed():
+    """Hand the sealed archive back to the browser so it can be opened or changed
+    there. It is encrypted, and this program has no way to read it."""
+    path = archive.sealed_path(_switches().store(g.user.id).current().archive_dir)
+    if not path.is_file():
+        abort(404)
+    return send_file(path, mimetype="application/octet-stream",
+                     as_attachment=True, download_name=archive.SEALED_NAME)
+
+
+@bp.post("/files/sealed")
+def put_sealed():
+    """Take a sealed archive from the browser. The passphrase never comes with it."""
+    store = _switches().store(g.user.id)
+    item = request.files.get("sealed")
+    if not item or not item.filename:
+        return jsonify(ok=False, error="Nothing was sent."), 400
+    archive.save_sealed(store.current().archive_dir, item)
+    store.set("sealed", "1")
+    g.engine.db.log_event(g.user.id, "files", "The sealed archive was replaced.")
+    return jsonify(ok=True)
+
+
 @bp.post("/files/delete")
 def delete_file():
     cfg = _switches().store(g.user.id).current()
     name = request.form.get("name", "")
     if archive.delete_file(cfg.archive_dir, name):
+        if name == archive.SEALED_NAME:
+            _switches().store(g.user.id).set("sealed", "")
         g.engine.db.log_event(g.user.id, "files", f"Removed from the archive: {name}.")
         return redirect("/settings?done=deleted")
     return redirect("/settings?error=That+file+is+not+there")

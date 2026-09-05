@@ -216,7 +216,17 @@ class Engine:
             parts.append("-" * 40)
         parts.append("This message was sent automatically because the owner stopped responding "
                      "to check-ins.\n\nThe attached file is encrypted. You were given the "
-                     "passphrase in person.\n\nAttached: " + name)
+                     "passphrase in person. Nobody else has it, and it is not in this email.\n\n"
+                     "Attached: " + name)
+        if cfg.sealed:
+            how = ("How to open it\n\n"
+                   "Either open it in a browser at " + (cfg.base_url + "/open" if cfg.base_url else "the Departed page")
+                   + ", which does the work on your own machine and sends nothing anywhere.\n\n"
+                   "Or, on any Mac or Linux computer, run this and give it the passphrase:\n\n"
+                   "  openssl enc -d -aes-256-cbc -pbkdf2 -iter 600000 -md sha256 \\\n"
+                   "    -in " + name + " -out inside.zip\n\n"
+                   "What comes out is an ordinary zip file.")
+            parts.append(how)
         return "\n\n".join(parts) + self._sign_off(cfg)
 
     def _fire(self, cfg, s, now):

@@ -94,10 +94,32 @@
 
 <section class="panel" id="files" aria-labelledby="files-h">
   <h2 id="files-h" class="panel-h">Your files</h2>
-  <p class="tint warning">! Lock these yourself before you add them. Encrypt them on your own computer, with a passphrase this program never sees. Departed only carries the sealed envelope; it cannot open it and neither can anybody who takes the server.</p>
-  {% if archive.count %}
+  <p class="hint">Whatever is here is what gets sent, and it has to be locked before it goes. This page can do that for you, in your browser, and hand you the passphrase. Or bring a file you locked yourself.</p>
+
+  <div class="sealed-block" data-sealed="{{ '1' if sealed else '' }}">
+    {% if sealed %}
+    <p class="tint success">✓ A sealed archive is ready. {{ size(sealed.size) }}, sealed {{ fmt(sealed.modified) }}.</p>
+    <p class="hint">Only your passphrase opens it. Departed does not have it, cannot ask for it, and cannot see a single thing inside.</p>
+    <div class="actions">
+      <button class="btn" type="button" data-seal-action="check">Check I can still open it</button>
+      <button class="btn" type="button" data-seal-action="edit">Change what is inside</button>
+      <form method="post" action="/files/delete" class="inline">
+        <input type="hidden" name="name" value="{{ sealed_name }}">
+        <button class="btn danger small" type="submit" data-confirm="Remove the sealed archive?">Remove it</button>
+      </form>
+    </div>
+    {% else %}
+    <p class="hint">Nothing sealed yet.</p>
+    <div class="actions"><button class="btn primary" type="button" data-seal-action="new">Seal some files</button></div>
+    {% endif %}
+    <div class="seal-panel" hidden></div>
+    <noscript><p class="tint warning">! This part needs JavaScript, because the sealing happens in your browser and not on the server. With it off, encrypt your files yourself and use the box further down.</p></noscript>
+  </div>
+
+  {% if loose %}
+  <h3 class="sub-h">Added by hand</h3>
   <ul class="files">
-    {% for f in archive.files %}
+    {% for f in loose %}
     <li>
       <span>{{ f.name }}</span>
       <span class="hint">{{ size(f.size) }} · {{ fmt(f.modified) }}</span>
@@ -108,16 +130,22 @@
     </li>
     {% endfor %}
   </ul>
-  <p class="hint">{{ archive.count }} file{{ 's' if archive.count != 1 }}, {{ size(archive.total_size) }} in total.{% if archive.count > 1 %} They are zipped together when sent.{% endif %}</p>
-  {% else %}
-  <p class="hint">Nothing here yet. The switch will not fire with nothing to send.</p>
   {% endif %}
-  <form method="post" action="/files" enctype="multipart/form-data" class="upload">
-    <label class="field" for="files-input">Add files</label>
-    <input id="files-input" name="files" type="file" multiple required>
-    <p class="hint">Up to {{ max_mb }} MB at a time. Many mail servers refuse attachments over about 20 MB, so keep the total modest and send yourself a test.</p>
-    <button class="btn" type="submit">Add to the archive</button>
-  </form>
+
+  <details class="own">
+    <summary>I encrypted them myself, with my own tool</summary>
+    <p class="hint">Then upload what your own tool produced. Departed will attach it exactly as it is, and will never try to open it. This is the way to go if you would rather not trust a web page with the job.</p>
+    <form method="post" action="/files" enctype="multipart/form-data" class="upload">
+      <label class="field" for="files-input">Files to add</label>
+      <input id="files-input" name="files" type="file" multiple required>
+      <p class="hint">Up to {{ max_mb }} MB at a time. Many mail servers refuse attachments over about 20 MB, so keep the total modest and send yourself a test.</p>
+      <button class="btn" type="submit">Add them</button>
+    </form>
+  </details>
+
+  {% if archive.count > 1 %}
+  <p class="hint">{{ archive.count }} files in total, {{ size(archive.total_size) }}. They are zipped together when sent.</p>
+  {% endif %}
 </section>
 
 <section class="panel" aria-labelledby="letter-h">
@@ -144,4 +172,6 @@
     <div class="actions"><button class="btn" type="submit">Change password</button></div>
   </form>
 </section>
+<script src="{{ url_for('static', filename='js/seal.js') }}?v={{ app_version }}"></script>
+<script src="{{ url_for('static', filename='js/files.js') }}?v={{ app_version }}"></script>
 {% endblock %}

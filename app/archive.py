@@ -10,6 +10,8 @@ from datetime import datetime, timezone
 
 SAFE = re.compile(r"[^A-Za-z0-9._-]+")
 
+SEALED_NAME = "departed-sealed.enc"
+
 
 def safe_name(name):
     """A filename we are willing to write. No paths, no surprises."""
@@ -60,6 +62,18 @@ def save_upload(folder, filename, stream):
         n += 1
     stream.save(target)
     return name
+
+
+def sealed_path(folder):
+    return folder / SEALED_NAME
+
+
+def save_sealed(folder, stream):
+    """Replace the sealed archive. The bytes arrive already encrypted by the
+    browser; nothing here can read them."""
+    folder.mkdir(parents=True, exist_ok=True)
+    stream.save(sealed_path(folder))
+    return SEALED_NAME
 
 
 def delete_file(folder, filename):

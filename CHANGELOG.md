@@ -2,6 +2,19 @@
 
 All notable changes to Departed are recorded here.
 
+## [0.4.0] — 2026-09-05
+
+- **The app can lock your files for you, without ever being able to read them.** Choose your files on the settings page and the locking happens in your own browser: they are zipped and encrypted there, and only the sealed result is sent to the server. The passphrase is made in the browser, shown to you once, and never sent, never stored and never written to the log. If you lose it, nobody can get it back, and the page says so before you leave it.
+- **You can go back in and change what is inside.** Give the passphrase, and the browser fetches the sealed file, opens it locally, lets you add or remove things, and seals it again. There is also a "check I can still open it" button, which proves your passphrase works without changing anything.
+- **The recipient does not need this program.** The sealed file is an ordinary OpenSSL container holding an ordinary zip, so one standard command opens it on any Mac or Linux machine. The email that carries it says exactly what to type.
+- **A page for opening one**, at `/open` in the app and on the website. It works entirely in the browser, uploads nothing, and tells the reader the command to use instead if they would rather not trust a web page.
+- Uploading a file you encrypted yourself still works, and is still the right choice for anyone who would rather not trust a web page with the job.
+
+### The website
+
+- Narrower. The text column is a normal reading width now rather than stretching across a wide screen.
+- A page for opening a sealed archive, and a shorter beta line.
+
 ## [0.3.0] — 2026-09-05
 
 Everything moved out of the server and into the app.

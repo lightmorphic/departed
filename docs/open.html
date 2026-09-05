@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Open a sealed archive - Departed</title>
+<meta name="description" content="Open a file sealed by Departed. It happens in your browser: the file is not uploaded and the passphrase is not sent anywhere.">
+<link rel="canonical" href="https://departed.lightmorphic.com/open.html">
+<meta name="theme-color" content="#05070c">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Departed">
+<meta property="og:title" content="Open a sealed archive - Departed">
+<meta property="og:description" content="Open a file sealed by Departed. It happens in your browser: the file is not uploaded and the passphrase is not sent anywhere.">
+<meta property="og:url" content="https://departed.lightmorphic.com/open.html">
+<meta property="og:image" content="https://departed.lightmorphic.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A single warm light on a dark horizon at dusk.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="topstack">
+  <p class="beta"><span class="tag">Beta</span> Departed is new and barely tested. Try it and tell me what breaks, but do not trust it yet with something that matters.</p>
+  <header class="site">
+    <a class="brand" href="/">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".45"/><circle cx="12" cy="12" r="3.4" fill="currentColor"/></svg>
+      <span>Departed</span>
+    </a>
+    <nav aria-label="Main">
+      <a href="/#how">How it works</a>
+      <a href="/#sealed">What it never knows</a>
+      <a href="/#app">The app</a>
+      <a href="/#run" class="nav-cta">Set it up</a>
+    </nav>
+  </header>
+</div>
+
+<main id="main" class="doc">
+  <h1>Open a sealed archive</h1>
+  <p class="stamp">Somebody has left you a file and a passphrase. Put both in below.</p>
+
+  <p class="lede-p">This happens entirely in your own browser. The file is not uploaded anywhere, the passphrase is not sent anywhere, and nothing here is recorded or counted. You can disconnect from the internet first if you would rather, and it will still work.</p>
+
+  <div class="opener">
+    <label class="field" for="sealed-file">The file</label>
+    <input id="sealed-file" type="file" accept=".enc,application/octet-stream">
+
+    <label class="field" for="sealed-pass">The passphrase</label>
+    <input id="sealed-pass" type="password" autocomplete="off" spellcheck="false">
+
+    <div class="actions"><button class="btn primary" type="button" id="open-it">Open it</button></div>
+    <div id="open-result"></div>
+    <noscript><p class="tint danger">! This page needs JavaScript, because the work happens here rather than on a server. Use the command below instead.</p></noscript>
+  </div>
+
+  <h2>If you would rather not use this page</h2>
+  <p>You do not have to trust it, and you do not need it. The file is an ordinary encrypted file, made the way OpenSSL makes them. Any Mac or Linux computer will open it with one command.</p>
+  <pre><code>openssl enc -d -aes-256-cbc -pbkdf2 -iter 600000 -md sha256 \
+  -in departed-sealed.enc -out inside.zip</code></pre>
+  <p>It asks for the passphrase, and what comes out is a normal zip file that any computer can open. On Windows the same command works inside Git Bash or the Windows Subsystem for Linux.</p>
+
+  <h2>If the passphrase does not work</h2>
+  <p>Check for a typed letter that should be a number, or a missing dash. The passphrase is all lower case, and it never contains the letters l or o, so those are almost certainly a one and a zero. If it still refuses, the file may have been damaged in transit, and there is nothing this page can do about that.</p>
+
+  <h2>What this file is</h2>
+  <p>Somebody set up a program called Departed to send it to you if they stopped answering its emails. Nobody read it on the way, and nobody but you has the passphrase. It was not stored anywhere by the program, and it cannot be recovered if it is lost.</p>
+  <p class="back"><a href="/">What is Departed?</a></p>
+</main>
+
+<footer class="site-foot">
+  <p><strong>Departed</strong> is a Lightmorphic project, free and open source under the GPL&nbsp;3.0.</p>
+  <p><a href="https://github.com/lightmorphic/departed">Source code</a> · <a href="https://lightmorph.co.uk">Lightmorphic</a></p>
+</footer>
+
+<div class="subfoot">
+  <p>&copy; Lightmorphic Ltd. Registered in England and Wales, company number 17423646.<br>
+     Registered office: 82A James Carter Road, Mildenhall, IP28 7DE.<br>
+     <!-- Update this date whenever this page changes. -->
+     Page last updated 5 September 2026.</p>
+  <nav class="legal-nav" aria-label="Legal">
+    <a href="/privacy.html">Privacy</a>
+    <a href="/cookies.html">Cookies</a>
+    <a href="/terms.html">Terms</a>
+    <a href="/accessibility.html">Accessibility</a>
+    <a href="/complaints.html">Complaints</a>
+  </nav>
+</div>
+<script src="js/seal.js"></script>
+<script src="js/open.js"></script>
+</body>
+</html>

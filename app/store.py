@@ -36,6 +36,8 @@ FIELDS = [
     ("reminder_interval_days", False, "1"),
     ("timezone", False, "Europe/London"),
     ("letter", True, ""),
+    # Only whether a sealed archive is present. Never anything about what is in it.
+    ("sealed", False, ""),
 ]
 SECRET_FIELDS = {name for name, is_secret, _ in FIELDS if is_secret}
 DEFAULTS = {name: default for name, _, default in FIELDS}
