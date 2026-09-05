@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Departed — a quiet way to leave something behind</title>
+<meta name="description" content="Departed waits. Every ten days it asks whether you are still here. If you stop answering, the files you locked yourself are sent, once, to the one person you chose.">
+<link rel="canonical" href="https://departed.lightmorphic.com/">
+<meta name="theme-color" content="#05070c">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Departed">
+<meta property="og:title" content="Departed — a quiet way to leave something behind">
+<meta property="og:description" content="Every ten days it asks whether you are still here. If you stop answering, the files you locked yourself are sent, once, to the one person you chose.">
+<meta property="og:url" content="https://departed.lightmorphic.com/">
+<meta property="og:image" content="https://departed.lightmorphic.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A single warm light on a dark horizon, above the word Departed.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Departed",
+"applicationCategory":"SecurityApplication","operatingSystem":"Docker (Linux, macOS, Windows)",
+"description":"A dead man's switch. It emails an archive you encrypted yourself to one trusted person if you stop answering its check-in emails.",
+"url":"https://departed.lightmorphic.com/","license":"https://www.gnu.org/licenses/gpl-3.0.html",
+"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},
+"author":{"@type":"Organization","name":"Lightmorphic","url":"https://lightmorph.co.uk"}}
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site">
+  <a class="brand" href="/">
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".45"/><circle cx="12" cy="12" r="3.4" fill="currentColor"/></svg>
+    <span>Departed</span>
+  </a>
+  <nav aria-label="Main">
+    <a href="#how">How it works</a>
+    <a href="#sealed">What it never knows</a>
+    <a href="#run" class="nav-cta">Set it up</a>
+  </nav>
+</header>
+
+<main id="main">
+
+  <!-- ── Hero: dusk ─────────────────────────────────────────────── -->
+  <section class="hero" aria-labelledby="hero-h">
+    <div class="scene" aria-hidden="true">
+      <svg class="sky" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" focusable="false">
+        <defs>
+          <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   class="sky-1"/>
+            <stop offset="52%"  class="sky-2"/>
+            <stop offset="82%"  class="sky-3"/>
+            <stop offset="100%" class="sky-4"/>
+          </linearGradient>
+          <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   class="glow-1"/>
+            <stop offset="55%"  class="glow-2"/>
+            <stop offset="100%" class="glow-3"/>
+          </radialGradient>
+          <radialGradient id="lamp" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   stop-color="#fbc711" stop-opacity=".85"/>
+            <stop offset="35%"  stop-color="#fbc711" stop-opacity=".28"/>
+            <stop offset="100%" stop-color="#fbc711" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <rect width="1440" height="900" fill="url(#skyGrad)"/>
+        <ellipse class="horizon-glow" cx="1000" cy="672" rx="700" ry="270" fill="url(#glow)"/>
+
+        <!-- mist, drifting -->
+        <g class="mist">
+          <ellipse class="m1" cx="300"  cy="638" rx="430" ry="16"/>
+          <ellipse class="m2" cx="1080" cy="664" rx="520" ry="13"/>
+          <ellipse class="m3" cx="700"  cy="700" rx="640" ry="18"/>
+        </g>
+
+        <!-- hills, far to near -->
+        <path class="hill far"  d="M-80 664 C 210 616, 350 646, 520 632 C 700 616, 830 656, 1010 636 C 1180 618, 1330 648, 1520 628 L1520 900 L-80 900 Z"/>
+        <path class="hill mid"  d="M-80 728 C 190 690, 330 716, 500 704 C 690 690, 880 724, 1060 706 C 1230 690, 1350 716, 1520 698 L1520 900 L-80 900 Z"/>
+        <path class="hill near" d="M-80 804 C 230 770, 420 796, 620 786 C 830 776, 1000 800, 1190 790 C 1340 784, 1420 792, 1520 784 L1520 900 L-80 900 Z"/>
+
+        <!-- the one light, and its slow signal -->
+        <g class="lamp-group" transform="translate(1012 754)">
+          <circle class="lamp-halo" r="150" fill="url(#lamp)"/>
+          <circle class="ring r1" r="14" fill="none"/>
+          <circle class="ring r2" r="14" fill="none"/>
+          <circle class="lamp-core" r="4.6"/>
+        </g>
+      </svg>
+      <div class="motes"></div>
+    </div>
+
+    <div class="hero-copy">
+      <p class="eyebrow">Departed</p>
+      <h1 id="hero-h">If you stop answering,<br>one person receives<br>what you left them.</h1>
+      <p class="lede">A small, patient program. Every ten days it asks whether you are still here. You click once and it goes back to waiting. It runs on a computer in your own home and asks nothing of anybody else.</p>
+      <p class="cta">
+        <a class="btn primary" href="#how">See how it works</a>
+        <a class="btn ghost" href="#run">Set it up</a>
+      </p>
+    </div>
+    <p class="scroll-hint" aria-hidden="true"><span></span></p>
+  </section>
+
+  <!-- ── Three promises ─────────────────────────────────────────── -->
+  <section class="creed" aria-label="What Departed is">
+    <p class="reveal">You choose one person.</p>
+    <p class="reveal">You lock the files yourself, before they ever reach it.</p>
+    <p class="reveal">The key is given by hand, and never to a machine.</p>
+  </section>
+
+  <!-- ── Timeline ───────────────────────────────────────────────── -->
+  <section class="how" id="how" aria-labelledby="how-h">
+    <div class="head">
+      <h2 id="how-h" class="reveal">Twenty-one quiet days</h2>
+      <p class="reveal">Nothing happens quickly here. It is built to be slow, so that an ordinary week away is never mistaken for something else.</p>
+    </div>
+
+    <ol class="timeline">
+      <li class="step reveal">
+        <span class="rail" aria-hidden="true"><i class="dot"></i></span>
+        <div class="body">
+          <p class="when">Day ten</p>
+          <h3>An email arrives with one link in it.</h3>
+          <p>It asks nothing of you but a click. The clock returns to the beginning, a note comes back to say it was heard, and the link is retired so it can never be used twice.</p>
+        </div>
+      </li>
+      <li class="step reveal">
+        <span class="rail" aria-hidden="true"><i class="dot"></i></span>
+        <div class="body">
+          <p class="when">Days eleven to twenty</p>
+          <h3>If you don't click, it asks again.</h3>
+          <p>The same gentle email, once a day, ten more times. Any one of them will do. A holiday, a hospital stay, a phone left in a drawer — there is a great deal of room here for ordinary life.</p>
+        </div>
+      </li>
+      <li class="step reveal">
+        <span class="rail" aria-hidden="true"><i class="dot"></i></span>
+        <div class="body">
+          <p class="when">Day twenty-one</p>
+          <h3>It sends what you prepared.</h3>
+          <p>One email, to the one person you named, with your locked files attached exactly as you left them. You are told as well, in case you are simply somewhere without a signal.</p>
+        </div>
+      </li>
+      <li class="step reveal last">
+        <span class="rail" aria-hidden="true"><i class="dot"></i></span>
+        <div class="body">
+          <p class="when">Afterwards</p>
+          <h3>It stops.</h3>
+          <p>It does not send again, or keep asking, or tell anybody else. It has done the only thing it was ever made to do.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ── Sealed ─────────────────────────────────────────────────── -->
+  <section class="sealed" id="sealed" aria-labelledby="sealed-h">
+    <div class="art reveal" aria-hidden="true">
+      <svg class="envelope" viewBox="0 0 340 232" focusable="false">
+        <defs>
+          <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%"   stop-color="#ffe9b0" stop-opacity="0"/>
+            <stop offset="48%"  stop-color="#ffe9b0" stop-opacity=".13"/>
+            <stop offset="100%" stop-color="#ffe9b0" stop-opacity="0"/>
+          </linearGradient>
+          <clipPath id="envClip"><rect x="16" y="16" width="308" height="200" rx="10"/></clipPath>
+        </defs>
+        <rect class="env" x="16" y="16" width="308" height="200" rx="10"/>
+        <g clip-path="url(#envClip)">
+          <path class="fold flap" d="M16 24 L170 138 L324 24"/>
+          <rect class="sheen" x="-160" y="6" width="120" height="220" fill="url(#sheen)"/>
+        </g>
+        <circle class="wax" cx="170" cy="138" r="16"/>
+        <circle class="wax-ring" cx="170" cy="138" r="9.5"/>
+      </svg>
+    </div>
+    <div class="words">
+      <h2 id="sealed-h" class="reveal">What it never knows</h2>
+      <p class="reveal">You lock the files on your own computer, with a passphrase of your own choosing. Only then do they go into the folder it watches. It never looks inside, never holds the key, never writes it down anywhere — not in its notes, not in its settings, not in its records of the day.</p>
+      <p class="reveal">It is a courier carrying a sealed envelope. If somebody stole the machine tomorrow, or read the email on its way, they would have the sealed envelope and nothing else.</p>
+      <p class="reveal quiet">The person you chose already has the key. You gave it to them yourself, out loud, in a room.</p>
+    </div>
+  </section>
+
+  <!-- ── Care ───────────────────────────────────────────────────── -->
+  <section class="care" aria-labelledby="care-h">
+    <h2 id="care-h" class="reveal">If something goes wrong</h2>
+    <p class="sub reveal">Most of the work in a thing like this is what it does on a bad day.</p>
+    <div class="cards">
+      <article class="card reveal">
+        <h3>If it sends by mistake</h3>
+        <p>You are emailed too, the moment it happens. Change the passphrase, click once, and it begins again from the start. A false alarm costs you an afternoon, not your privacy.</p>
+      </article>
+      <article class="card reveal">
+        <h3>If there is nothing to send</h3>
+        <p>It will not send an empty envelope. If the folder is bare when the day comes, it holds everything and writes to you instead, once a day, until there is something there.</p>
+      </article>
+      <article class="card reveal">
+        <h3>If the message won't go</h3>
+        <p>A mail server that is down does not end the matter. It tries again every few minutes, for as long as it takes, and it never records the thing as done until it truly is.</p>
+      </article>
+      <article class="card reveal">
+        <h3>If the machine was switched off</h3>
+        <p>It does not come back and act on a stale clock. It picks up where it left off and works through the whole run of asking, one day at a time, before it does anything final.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ── Home ───────────────────────────────────────────────────── -->
+  <section class="home" aria-labelledby="home-h">
+    <div class="art reveal" aria-hidden="true">
+      <svg class="house" viewBox="0 0 340 250" focusable="false">
+        <defs>
+          <radialGradient id="spill" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   stop-color="#ffcf7a" stop-opacity=".34"/>
+            <stop offset="55%"  stop-color="#ffb45a" stop-opacity=".09"/>
+            <stop offset="100%" stop-color="#ffb45a" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="#fff0cb"/>
+            <stop offset="100%" stop-color="#f0ad42"/>
+          </linearGradient>
+          <radialGradient id="vigGrad" cx="50%" cy="52%" r="56%">
+            <stop offset="0%"   stop-color="#fff" stop-opacity="1"/>
+            <stop offset="62%"  stop-color="#fff" stop-opacity=".92"/>
+            <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+          </radialGradient>
+          <mask id="vig"><rect x="0" y="0" width="340" height="250" fill="url(#vigGrad)"/></mask>
+        </defs>
+
+        <g mask="url(#vig)">
+          <path class="ridge far"  d="M0 178 C 70 160, 128 174, 196 166 C 262 158, 300 172, 340 164 L340 250 L0 250 Z"/>
+          <ellipse class="spill" cx="182" cy="150" rx="152" ry="114" fill="url(#spill)"/>
+          <ellipse class="pool"  cx="182" cy="206" rx="92" ry="16"/>
+          <path class="ridge near" d="M0 206 C 84 194, 150 208, 226 202 C 288 197, 312 205, 340 201 L340 250 L0 250 Z"/>
+        </g>
+
+        <g class="dwelling">
+          <rect class="chimney" x="199" y="72" width="13" height="30" rx="2"/>
+          <path class="roof" d="M92 122 L164 64 L236 122 Z"/>
+          <rect class="walls" x="108" y="120" width="112" height="86" rx="2"/>
+          <path class="eave" d="M92 122 L164 64" />
+          <rect class="door"  x="122" y="160" width="24" height="46" rx="2"/>
+          <rect class="lit"   x="166" y="142" width="34" height="32" rx="1.5" fill="url(#glass)"/>
+          <line class="bar" x1="183" y1="142" x2="183" y2="174"/>
+          <line class="bar" x1="166" y1="158" x2="200" y2="158"/>
+        </g>
+      </svg>
+    </div>
+    <div class="words">
+      <h2 id="home-h" class="reveal">It lives in your house</h2>
+      <p class="reveal">Departed runs on a small computer of your own, on your own network, reachable only by you. There is no company holding your files, no account to lose, nothing to keep paying for. Nobody can be asked to hand over what they were never given.</p>
+      <p class="reveal">It is free, and the whole of it is open to read, so that anyone you trust can check for themselves what it does and what it cannot do.</p>
+    </div>
+  </section>
+
+  <!-- ── Run it ─────────────────────────────────────────────────── -->
+  <section class="run" id="run" aria-labelledby="run-h">
+    <div class="panel reveal">
+      <h2 id="run-h">Setting it up</h2>
+      <p>This part needs somebody comfortable with a home server — you, or whoever looks after yours. It is three commands and a settings file.</p>
+      <pre><code>docker compose up -d</code></pre>
+      <p class="hint">You put your locked files in one folder, write your email address, your person's email address and your mail settings into a plain settings file, and open the page it serves to press <em>Send a test email</em>. That test posts the whole thing to you rather than to them, so you can watch it arrive before you ever rely on it.</p>
+      <p class="cta">
+        <a class="btn primary" href="https://github.com/lightmorphic/departed">Read it on GitHub</a>
+        <a class="btn ghost" href="https://github.com/lightmorphic/departed#readme">Full instructions</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="close" aria-label="In closing">
+    <p class="reveal">Set it once, and then forget it.<br>Clicking a link every ten days is a small thing.<br>Not having to think about it again is the point.</p>
+  </section>
+
+</main>
+
+<footer class="site-foot">
+  <p><strong>Departed</strong> — a Lightmorphic project. Free and open source under the GPL&nbsp;3.0.</p>
+  <p><a href="https://github.com/lightmorphic/departed">Source code</a> · <a href="https://lightmorph.co.uk">Lightmorphic</a></p>
+  <p class="tiny">This site sets no cookies, loads nothing from anywhere else, and counts nobody.</p>
+</footer>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var d = document;
+
+  /* Drifting motes, built here so there is no markup for them when motion is off. */
+  var field = d.querySelector('.motes');
+  if (field && !reduce) {
+    for (var i = 0; i < 16; i++) {
+      var m = d.createElement('i');
+      m.style.left = (Math.random() * 100).toFixed(2) + '%';
+      m.style.setProperty('--dur', (26 + Math.random() * 34).toFixed(1) + 's');
+      m.style.setProperty('--delay', (-Math.random() * 40).toFixed(1) + 's');
+      m.style.setProperty('--size', (1.4 + Math.random() * 2.4).toFixed(2) + 'px');
+      m.style.setProperty('--drift', ((Math.random() - 0.5) * 90).toFixed(0) + 'px');
+      m.style.setProperty('--peak', (0.18 + Math.random() * 0.42).toFixed(2));
+      field.appendChild(m);
+    }
+  }
+
+  /* Reveal on scroll. Without support, everything is simply visible. */
+  var items = d.querySelectorAll('.reveal');
+  if (reduce || !('IntersectionObserver' in window)) {
+    items.forEach(function (el) { el.classList.add('in'); });
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { rootMargin: '0px 0px -12% 0px', threshold: 0.15 });
+  items.forEach(function (el) { io.observe(el); });
+})();
+</script>
+</body>
+</html>
