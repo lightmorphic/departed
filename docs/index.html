@@ -312,9 +312,8 @@
     <ol class="steps">
       <li class="reveal">
         <h3>Make a folder for it</h3>
-        <p>This one folder holds everything: the database, your files and the log. Back it up and you have the lot. The app runs as an ordinary user rather than as root, which is why the folder is handed to user 1000.</p>
-<pre><code>sudo mkdir -p /opt/departed
-sudo chown -R 1000:1000 /opt/departed</code></pre>
+        <p>This one folder holds everything: the database, your files and the log. Back it up and you have the lot. It sorts out its own permissions on that folder when it starts, so there is nothing to do beyond making it.</p>
+<pre><code>sudo mkdir -p /opt/departed</code></pre>
       </li>
 
       <li class="reveal">
