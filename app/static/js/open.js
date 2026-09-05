@@ -43,7 +43,13 @@
     var was = button.textContent;
     button.textContent = 'Opening...';
     try {
-      var sealed = new Uint8Array(await file.files[0].arrayBuffer());
+      var raw = new Uint8Array(await file.files[0].arrayBuffer());
+      var sealed = raw;
+      if (!(raw.length > 8 && String.fromCharCode.apply(null, raw.subarray(0, 8)) === 'Salted__')) {
+        var found = Seal.payloadFrom(new TextDecoder().decode(raw));
+        if (!found) throw new Error('That file does not hold a sealed archive.');
+        sealed = found;
+      }
       var inside = await Seal.open(sealed, pass.value);
       say('success', 'It opened. ' + inside.length + ' file' + (inside.length === 1 ? '' : 's') + ' inside.');
       var list = document.createElement('ul');

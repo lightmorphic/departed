@@ -218,15 +218,16 @@ class Engine:
                      "to check-ins.\n\nThe attached file is encrypted. You were given the "
                      "passphrase in person. Nobody else has it, and it is not in this email.\n\n"
                      "Attached: " + name)
-        if cfg.sealed:
-            how = ("How to open it\n\n"
-                   "Either open it in a browser at " + (cfg.base_url + "/open" if cfg.base_url else "the Departed page")
-                   + ", which does the work on your own machine and sends nothing anywhere.\n\n"
-                   "Or, on any Mac or Linux computer, run this and give it the passphrase:\n\n"
-                   "  openssl enc -d -aes-256-cbc -pbkdf2 -iter 600000 -md sha256 \\\n"
-                   "    -in " + name + " -out inside.zip\n\n"
-                   "What comes out is an ordinary zip file.")
-            parts.append(how)
+        if cfg.sealed and name.endswith(".html"):
+            parts.append("How to open it\n\n"
+                         "Save the attached file somewhere you can find it, then double-click it. "
+                         "It opens in your web browser and asks for the passphrase. That is all there "
+                         "is to it. It works on Windows, on a Mac and on Linux, it needs nothing "
+                         "installed, and it works with no internet connection.\n\n"
+                         "The file does the work on your own computer. Nothing is uploaded and nobody "
+                         "is told that you opened it. If you would rather not trust a page like that, "
+                         "there is a button inside it that saves the plain encrypted file, and it "
+                         "tells you the one command that opens it instead.")
         return "\n\n".join(parts) + self._sign_off(cfg)
 
     def _fire(self, cfg, s, now):

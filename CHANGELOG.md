@@ -2,6 +2,13 @@
 
 All notable changes to Departed are recorded here.
 
+## [0.4.1] — 2026-09-05
+
+- **What gets sent is now a single file that opens itself.** The recipient saves it, double-clicks it, and types the passphrase. It opens in whatever browser their computer already has, lists the files, and saves them. Nothing to install, on Windows, a Mac or Linux, and no internet connection needed: the file carries both the sealed archive and the code that opens it, and reaches out to nothing.
+- The plain encrypted file is still in there, and the page has a button to save it out for anyone who would rather use one OpenSSL command.
+- The firing email now explains the double-click rather than a command line.
+- The opening page takes either kind of file, and there is a test that fails if the sent file ever gains an external address.
+
 ## [0.4.0] — 2026-09-05
 
 - **The app can lock your files for you, without ever being able to read them.** Choose your files on the settings page and the locking happens in your own browser: they are zipped and encrypted there, and only the sealed result is sent to the server. The passphrase is made in the browser, shown to you once, and never sent, never stored and never written to the log. If you lose it, nobody can get it back, and the page says so before you leave it.

@@ -199,6 +199,140 @@
     return unzip(plain);
   }
 
+  // ---- base64 ---------------------------------------------------------
+
+  function toBase64(data) {
+    var out = '', chunk = 0x8000;
+    for (var i = 0; i < data.length; i += chunk) {
+      out += String.fromCharCode.apply(null, data.subarray(i, i + chunk));
+    }
+    return btoa(out);
+  }
+
+  function fromBase64(text) {
+    var raw = atob(text.replace(/\s+/g, ''));
+    var out = bytes(raw.length);
+    for (var i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
+    return out;
+  }
+
+
+  // ---- what the opener page is made of --------------------------------
+
+  var OPENER_CSS = [
+    ':root{color-scheme:light dark;--bg:#f7f4ef;--fg:#14161d;--soft:#4a5060;--muted:#5c6270;',
+    '--panel:#fff;--line:rgba(24,24,40,.14);--accent:#fbc711;--on-accent:#443502;--ok:#2e6b30;--okbg:#eaf5ea;--bad:#a82c23;--badbg:#fdecea}',
+    '@media(prefers-color-scheme:dark){:root{--bg:#0a0d14;--fg:#eceef4;--soft:#b4bac9;--muted:#8b91a3;',
+    '--panel:#141824;--line:rgba(255,255,255,.12);--ok:#6fc973;--okbg:#122a14;--bad:#f4756b;--badbg:#2c100c}}',
+    '*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);',
+    'font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:2.5rem 1.25rem 4rem}',
+    'main{max-width:34rem;margin:0 auto}h1{font-size:1.75rem;line-height:1.2;letter-spacing:-.02em;margin:0 0 .75rem}',
+    'p{margin:0 0 1rem;color:var(--soft)}.lead{color:var(--fg);font-size:1.0625rem}',
+    '.card{background:var(--panel);border:1px solid var(--line);border-radius:1rem;padding:1.5rem;margin:1.75rem 0}',
+    'label{display:block;font-weight:600;color:var(--fg);margin:0 0 .5rem}',
+    'input[type=password]{display:block;width:100%;font:inherit;min-height:2.75rem;padding:.625rem .875rem;',
+    'border-radius:.75rem;border:1px solid var(--line);background:var(--bg);color:var(--fg)}',
+    'button{font:inherit;font-weight:700;min-height:2.75rem;padding:.6875rem 1.375rem;border-radius:.75rem;',
+    'border:1px solid var(--line);background:var(--panel);color:var(--fg);cursor:pointer}',
+    'button.go{background:var(--accent);color:var(--on-accent);border-color:transparent;margin-top:1rem}',
+    'button.small{min-height:2.25rem;padding:.375rem .875rem;font-size:.875rem}',
+    'button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}',
+    '.msg{padding:.75rem 1rem;border-radius:.75rem;font-weight:600;margin:1.25rem 0 0}',
+    '.msg.ok{background:var(--okbg);color:var(--ok)}.msg.bad{background:var(--badbg);color:var(--bad)}',
+    'ul{list-style:none;margin:1.25rem 0 0;padding:0}',
+    'li{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;padding:.75rem 0;border-top:1px solid var(--line)}',
+    'li .n{flex:1;min-width:9rem;overflow-wrap:anywhere}li .s{font-size:.8125rem;color:var(--muted)}',
+    'details{margin-top:2rem;border-top:1px solid var(--line);padding-top:1.25rem}',
+    'summary{cursor:pointer;font-weight:600;min-height:2.75rem;display:flex;align-items:center}',
+    'code,pre{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.8125rem}',
+    'pre{background:var(--panel);border:1px solid var(--line);border-radius:.75rem;padding:1rem;overflow-x:auto;line-height:1.7}',
+    '.foot{margin-top:2.5rem;font-size:.8125rem;color:var(--muted)}'
+  ].join('');
+
+  var OPENER_BODY = [
+    '<main>',
+    '<h1>Somebody has left you some files</h1>',
+    '<p class="lead">They were locked before they were sent, and they were sealed on {{stamp}}. ',
+    'You were given a passphrase. Type it in and you will get everything back.</p>',
+    '<div class="card">',
+    '<label for="p">The passphrase</label>',
+    '<input id="p" type="password" autocomplete="off" spellcheck="false" autofocus>',
+    '<button class="go" id="go" type="button">Open it</button>',
+    '<div id="r"></div>',
+    '<noscript><p class="msg bad">This page needs JavaScript. Open it in an ordinary web browser rather than a preview window.</p></noscript>',
+    '</div>',
+    '<p>Nothing here goes anywhere. This file does all the work on the computer you opened it on, and it works with no internet connection at all. Nobody is told that you opened it.</p>',
+    '<details><summary>If you would rather not trust this page</summary>',
+    '<p>You do not have to use it. Underneath, this is an ordinary encrypted file of the kind OpenSSL makes. Save it with the button below, then run this on any Mac or Linux machine, or in Git Bash on Windows.</p>',
+    '<pre>openssl enc -d -aes-256-cbc -pbkdf2 -iter 600000 -md sha256 \\\n  -in sealed.enc -out inside.zip</pre>',
+    '<p>It asks for the same passphrase, and out comes an ordinary zip file.</p>',
+    '<button class="small" id="raw" type="button">Save the encrypted file</button>',
+    '</details>',
+    '<p class="foot">Made by Departed, a dead man&rsquo;s switch. If the passphrase does not work, check for a letter that should be a number. There is no l or o in it, so those will be a one and a zero.</p>',
+    '</main>'
+  ].join('\n');
+
+  var OPENER_JS = [
+    '(function(){',
+    'var pass=document.getElementById("p"),go=document.getElementById("go"),out=document.getElementById("r");',
+    'function say(k,t){out.innerHTML="";var p=document.createElement("p");p.className="msg "+k;',
+    'p.setAttribute("role","status");p.textContent=(k==="ok"?"\\u2713 ":"! ")+t;out.appendChild(p);return p;}',
+    'function readable(n){var u=["bytes","KB","MB","GB"];for(var i=0;i<u.length;i++){if(n<1024||i===3)',
+    'return (i?n.toFixed(1):n)+" "+u[i];n/=1024;}}',
+    'function save(name,data){var url=URL.createObjectURL(new Blob([data],{type:"application/octet-stream"}));',
+    'var a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();',
+    'setTimeout(function(){URL.revokeObjectURL(url);},4000);}',
+    'var payload=Seal.fromBase64(document.getElementById("departed-payload").textContent);',
+    'document.getElementById("raw").addEventListener("click",function(){save("sealed.enc",payload);});',
+    'async function attempt(){',
+    'if(!pass.value){return say("bad","Type the passphrase first.");}',
+    'go.disabled=true;var was=go.textContent;go.textContent="Opening\\u2026";',
+    'try{var inside=await Seal.open(payload,pass.value);',
+    'say("ok","It opened. "+inside.length+" file"+(inside.length===1?"":"s")+" inside.");',
+    'var list=document.createElement("ul");',
+    'inside.forEach(function(f){var li=document.createElement("li");',
+    'var n=document.createElement("span");n.className="n";n.textContent=f.name;',
+    'var s=document.createElement("span");s.className="s";s.textContent=readable(f.data.length);',
+    'var b=document.createElement("button");b.type="button";b.className="small";b.textContent="Save it";',
+    'b.addEventListener("click",function(){save(f.name,f.data);});',
+    'li.appendChild(n);li.appendChild(s);li.appendChild(b);list.appendChild(li);});',
+    'out.appendChild(list);',
+    'var all=document.createElement("button");all.type="button";all.className="go";all.textContent="Save them all";',
+    'all.addEventListener("click",function(){inside.forEach(function(f,i){setTimeout(function(){save(f.name,f.data);},i*350);});});',
+    'out.appendChild(all);',
+    '}catch(e){say("bad",e.message);}',
+    'go.disabled=false;go.textContent=was;}',
+    'go.addEventListener("click",attempt);',
+    'pass.addEventListener("keydown",function(e){if(e.key==="Enter")attempt();});',
+    '})();'
+  ].join('\n');
+
+  // ---- the file that opens itself -------------------------------------
+
+  var PAYLOAD_ID = 'departed-payload';
+
+  /* Wraps the sealed bytes in a small web page. The person who receives it
+   * double-clicks the file, types the passphrase, and gets their files back.
+   * It works with no internet connection and on any computer with a browser. */
+  function makeOpener(sealed, sealSource, when) {
+    var stamp = (when || new Date()).toISOString().slice(0, 10);
+    return '<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
+      + '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+      + '<title>Open me</title>\n<style>' + OPENER_CSS + '</style>\n</head>\n<body>\n'
+      + OPENER_BODY.replace('{{stamp}}', stamp)
+      + '\n<script id="' + PAYLOAD_ID + '" type="application/octet-stream">' + toBase64(sealed) + '<\/script>\n'
+      + '<script>' + sealSource + '<\/script>\n'
+      + '<script>' + OPENER_JS + '<\/script>\n</body>\n</html>\n';
+  }
+
+  /* Pulls the sealed bytes back out of one of those pages, so the person who
+   * made it can change what is inside. */
+  function payloadFrom(text) {
+    var match = /id="departed-payload"[^>]*>([A-Za-z0-9+/=\s]+)</.exec(text);
+    if (!match) return null;
+    return fromBase64(match[1]);
+  }
+
   // ---- passphrases ---------------------------------------------------
 
   // No letters or digits that get mistaken for one another when read aloud
@@ -224,6 +358,10 @@
     zip: zip,
     unzip: unzip,
     makePassphrase: makePassphrase,
+    makeOpener: makeOpener,
+    payloadFrom: payloadFrom,
+    toBase64: toBase64,
+    fromBase64: fromBase64,
     iterations: ITER,
   };
 })(typeof window !== 'undefined' ? window : globalThis);
