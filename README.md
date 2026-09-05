@@ -24,14 +24,14 @@ Several people can share one copy. Each has their own account, their own setting
 You need Docker. There are no settings in the compose file: everything is set in the browser afterwards.
 
 ```bash
-sudo mkdir -p /opt/departed
-sudo chown -R 1000:1000 /opt/departed
 docker compose up -d
 ```
 
 Open `http://<your-server>:4160`. The first visit asks you to make an account, and that first account is the administrator. Then fill in the settings page, add your files, and press **Send a test email**. You get exactly what your person would get, so you can prove the whole path works without firing anything.
 
-The app runs as user 1000 inside the container, which is why the folder is owned by 1000 on the host.
+The app runs as an ordinary user inside the container, not as root. It starts as root for the one moment it takes to hand the mounted folder to that user, then drops to it and stays there. So the folder can be made by anything, including a Docker manager that makes it as root, and it will still work.
+
+If you would rather it never had root at all, add `user: "1000:1000"` to the service and give it the folder yourself with `sudo chown -R 1000:1000 /opt/departed`.
 
 ### The only two things on the server
 

@@ -29,14 +29,15 @@ COPY --from=build /opt/venv /opt/venv
 
 WORKDIR /app
 COPY app ./app
-COPY run.py VERSION ./
+COPY run.py entrypoint.py VERSION ./
 
 RUN mkdir -p /data && chown -R 1000:1000 /data /app
 
-USER 1000
+# It starts as root only long enough to hand the mounted folder to user 1000,
+# then drops to that user before anything else happens. See entrypoint.py.
 EXPOSE 8080
 
 HEALTHCHECK --interval=60s --timeout=10s --start-period=20s --retries=3 \
   CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=8)" || exit 1
 
-CMD ["python", "run.py"]
+CMD ["python", "entrypoint.py"]

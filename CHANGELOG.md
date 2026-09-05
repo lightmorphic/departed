@@ -2,6 +2,14 @@
 
 All notable changes to Departed are recorded here.
 
+## [0.4.7] — 2026-09-05
+
+**Fixes a crash on first run.** If the folder you mounted belonged to root, which is what happens when a Docker manager makes it for you, the app could not write to it and stopped at once with a database error and nothing useful to say. The web address in front of it then returned a 502, because there was nothing behind it.
+
+- It now takes ownership of the mounted folder as it starts, then drops to its own ordinary user before anything else happens. Root is held for a fraction of a second and never used to serve anything.
+- If it still cannot write there, it says so in plain words and gives the one command to fix it, rather than printing a stack trace.
+- The setup instructions lost a step as a result.
+
 ## [0.4.6] — 2026-09-05
 
 - No particular schedule is stated anywhere on the website or in the README any more. The steps describe what happens rather than when: it asks as often as you told it to, asks again as many times as you asked for, and sends when the asking runs out. One worked example is given as an example, and nothing else assumes a number.
