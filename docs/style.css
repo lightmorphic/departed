@@ -121,11 +121,22 @@ a { color: inherit; }
 
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 
-/* ── Header ─────────────────────────────────────────────────────── */
+/* ── Beta bar and header ────────────────────────────────────────── */
+.topstack { position: absolute; inset: 0 0 auto; z-index: 10; }
+.beta {
+  background: var(--panel); border-bottom: 1px solid var(--rule);
+  padding: .75rem clamp(1.25rem, 4vw, 3rem);
+  font-size: .875rem; color: var(--fg-soft); line-height: 1.55;
+}
+.beta .tag {
+  display: inline-block; margin-right: .625rem;
+  background: var(--accent-container); color: var(--on-accent-container);
+  font-size: .6875rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+  padding: .1875rem .5rem; border-radius: 999px;
+}
 .site {
-  position: absolute; inset: 0 0 auto; z-index: 10;
   display: flex; align-items: center; justify-content: space-between;
-  gap: 1.5rem; padding: 1.5rem clamp(1.25rem, 4vw, 3rem);
+  gap: 1.5rem; padding: 1.25rem clamp(1.25rem, 4vw, 3rem);
 }
 .brand {
   display: inline-flex; align-items: center; gap: .5rem;
@@ -149,7 +160,7 @@ a { color: inherit; }
   position: relative;
   min-height: min(100svh, 62rem);
   display: grid; align-items: center;
-  padding: clamp(7rem, 16vh, 11rem) clamp(1.25rem, 4vw, 3rem) clamp(5rem, 12vh, 9rem);
+  padding: clamp(11rem, 22vh, 14rem) clamp(1.25rem, 4vw, 3rem) clamp(5rem, 12vh, 9rem);
   isolation: isolate;
 }
 .scene { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
@@ -222,10 +233,6 @@ a { color: inherit; }
 }
 
 .hero-copy { position: relative; max-width: 42rem; }
-.eyebrow {
-  font-size: .8125rem; font-weight: 700; letter-spacing: .22em;
-  text-transform: uppercase; color: var(--accent-text); margin-bottom: 1.25rem;
-}
 .hero h1 {
   font-size: clamp(2.25rem, 6.2vw, 4.125rem);
   font-weight: 600; line-height: 1.08; letter-spacing: -.035em;
@@ -249,21 +256,9 @@ a { color: inherit; }
 .btn.ghost { border-color: var(--rule); color: var(--fg); }
 .btn.ghost:hover { border-color: var(--fg-soft); }
 
-.scroll-hint {
-  position: absolute; left: 50%; bottom: 2.25rem; translate: -50% 0;
-  width: 1px; height: 3.5rem; background: var(--rule); overflow: hidden;
-}
-.scroll-hint span {
-  display: block; width: 1px; height: 1.25rem; background: var(--accent);
-  animation: trickle 3.4s ease-in-out infinite;
-}
-@keyframes trickle {
-  0%       { transform: translateY(-1.4rem); opacity: 0; }
   35%, 65% { opacity: 1; }
   100%     { transform: translateY(3.6rem); opacity: 0; }
 }
-@media (max-width: 46rem) { .scroll-hint { display: none; } }
-
 /* On a narrow screen the copy fills the width, so the scrim falls from the top
    instead of the side and the horizon stays visible underneath. */
 @media (max-width: 52rem) {
@@ -278,7 +273,7 @@ a { color: inherit; }
 
 /* ── Shared rhythm ──────────────────────────────────────────────── */
 section { padding-inline: clamp(1.25rem, 4vw, 3rem); }
-.creed, .how, .sealed, .care, .home, .run, .close { max-width: 74rem; margin-inline: auto; }
+.opening, .how, .sealed, .care, .home, .run { max-width: 74rem; margin-inline: auto; }
 
 .reveal {
   opacity: 0; transform: translate3d(0, 1.25rem, 0);
@@ -290,23 +285,20 @@ section { padding-inline: clamp(1.25rem, 4vw, 3rem); }
 }
 
 /* ── Creed ──────────────────────────────────────────────────────── */
-.creed { padding-block: clamp(5rem, 13vh, 9rem); max-width: 52rem; }
-.creed p {
-  font-size: clamp(1.375rem, 3.1vw, 2rem);
-  font-weight: 500; line-height: 1.35; letter-spacing: -.02em;
-  padding-block: 1.125rem; text-wrap: balance;
+.opening { padding-block: clamp(4.5rem, 12vh, 8rem); max-width: 58rem; }
+.opening p {
+  max-width: 34rem;
+  font-size: clamp(1.3125rem, 2.7vw, 1.75rem);
+  font-weight: 500; line-height: 1.45; letter-spacing: -.018em;
 }
-.creed p + p { border-top: 1px solid var(--rule); }
-.creed p:nth-child(2) { transition-delay: .12s; }
-.creed p:nth-child(3) { transition-delay: .24s; }
 
 /* ── Timeline ───────────────────────────────────────────────────── */
-.how { padding-block: clamp(4rem, 9vh, 7rem); max-width: 58rem; }
-.how .head { max-width: 38rem; margin-bottom: clamp(3rem, 7vh, 4.5rem); }
-.how .head h2, .care h2, .sealed h2, .home h2, .run h2 {
+.how { padding-block: 0 clamp(4rem, 9vh, 7rem); max-width: 58rem; }
+.head { max-width: 38rem; margin-bottom: clamp(2.5rem, 6vh, 4rem); }
+.head h2, .sealed h2, .home h2, .run h2 {
   font-size: clamp(1.75rem, 3.6vw, 2.625rem); letter-spacing: -.03em;
 }
-.how .head p { margin-top: 1rem; color: var(--fg-soft); transition-delay: .1s; }
+.head p { margin-top: 1rem; color: var(--fg-soft); }
 
 .timeline { list-style: none; margin: 0; padding: 0; }
 .step { display: grid; grid-template-columns: 2.25rem 1fr; gap: clamp(1.25rem, 3vw, 2.25rem); }
@@ -338,11 +330,8 @@ section { padding-inline: clamp(1.25rem, 4vw, 3rem); }
 }
 .step .body { padding-bottom: clamp(2.75rem, 6vh, 4rem); max-width: 40rem; }
 .step.last .body { padding-bottom: 0; }
-.when {
-  font-size: .75rem; font-weight: 700; letter-spacing: .18em;
-  text-transform: uppercase; color: var(--accent-text); margin-bottom: .625rem;
-}
-.step h3 { font-size: clamp(1.25rem, 2.4vw, 1.625rem); letter-spacing: -.024em; }
+.step h3 { font-size: clamp(1.1875rem, 2.2vw, 1.5rem); letter-spacing: -.022em; max-width: 30ch; }
+.step .dot-year { display: none; }
 .step .body p:last-child { margin-top: .875rem; color: var(--fg-soft); }
 
 /* ── Two illustrated sections ───────────────────────────────────── */
@@ -359,11 +348,9 @@ section { padding-inline: clamp(1.25rem, 4vw, 3rem); }
 }
 .sealed .art svg, .home .art svg { width: 100%; max-width: 30rem; height: auto; display: block; margin-inline: auto; }
 .sealed .words p, .home .words p { margin-top: 1.25rem; color: var(--fg-soft); max-width: 36rem; }
-.sealed .words p:nth-of-type(2) { transition-delay: .1s; }
 .sealed .words p.quiet {
   color: var(--fg); font-size: 1.1875rem; font-weight: 500;
   border-top: 1px solid var(--rule); padding-top: 1.25rem; margin-top: 2rem;
-  transition-delay: .2s;
 }
 
 .env { fill: var(--env); stroke: var(--env-line); stroke-width: 1.5; }
@@ -392,21 +379,14 @@ section { padding-inline: clamp(1.25rem, 4vw, 3rem); }
 
 /* ── Care ───────────────────────────────────────────────────────── */
 .care { padding-block: clamp(3.5rem, 8vh, 5.5rem); }
-.care .sub { margin-top: 1rem; color: var(--fg-soft); max-width: 34rem; transition-delay: .1s; }
-.cards {
-  margin-top: clamp(2.25rem, 5vh, 3.25rem);
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(min(26rem, 100%), 1fr));
-  gap: 1.25rem;
+.mishaps {
+  margin: 0; display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(24rem, 100%), 1fr));
+  column-gap: clamp(2rem, 5vw, 4rem);
 }
-.card {
-  background: var(--panel); border: 1px solid var(--panel-border);
-  border-radius: var(--panel-radius); padding: 1.75rem;
-}
-.card h3 { font-size: 1.0625rem; }
-.card p { margin-top: .75rem; color: var(--fg-soft); font-size: .9688rem; }
-.cards .card:nth-child(2) { transition-delay: .08s; }
-.cards .card:nth-child(3) { transition-delay: .16s; }
-.cards .card:nth-child(4) { transition-delay: .24s; }
+.mishaps > div { padding: 1.375rem 0; border-top: 1px solid var(--rule); max-width: 34rem; }
+.mishaps dt { font-weight: 700; font-size: 1.0625rem; }
+.mishaps dd { margin: .5rem 0 0; color: var(--fg-soft); font-size: .9688rem; }
 
 /* ── Run it ─────────────────────────────────────────────────────── */
 .run { padding-block: clamp(1.5rem, 3vh, 2.5rem) clamp(3.5rem, 8vh, 5rem); }
@@ -425,12 +405,6 @@ section { padding-inline: clamp(1.25rem, 4vw, 3rem); }
 .run .hint { font-size: .9375rem; }
 .run .cta { margin-top: 2rem; }
 
-/* ── Close ──────────────────────────────────────────────────────── */
-.close { padding-block: clamp(5rem, 13vh, 9rem); max-width: 46rem; text-align: center; }
-.close p {
-  font-size: clamp(1.25rem, 2.8vw, 1.75rem); font-weight: 500;
-  line-height: 1.5; letter-spacing: -.02em; color: var(--fg); text-wrap: balance;
-}
 
 /* ── Footer ─────────────────────────────────────────────────────── */
 .site-foot {
@@ -448,7 +422,7 @@ section { padding-inline: clamp(1.25rem, 4vw, 3rem); }
 /* ── Motion off ─────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .horizon-glow, .hill, .mist ellipse, .lamp-core, .lamp-halo, .ring,
-  .scroll-hint span, .sheen, .lit, .spill, .motes i, .dot, .step.in .dot {
+  .sheen, .lit, .spill, .motes i, .dot, .step.in .dot {
     animation: none !important;
   }
   .ring { opacity: .3; }
