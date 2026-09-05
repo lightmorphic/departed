@@ -244,3 +244,14 @@ details.own .upload { border-top: 0; padding-top: 0; }
   .passphrase { border: 1px solid #000; color: #000; background: #fff; }
 }
 .tint.info { background: var(--info-bg); color: var(--info); }
+
+/* saved as you go */
+.saved {
+  margin-left: .625rem; font-size: .8125rem; font-weight: 600; color: var(--success);
+  opacity: 0; transition: opacity .2s ease;
+}
+.saved.on { opacity: 1; }
+.saved.bad { color: var(--danger); }
+.hint.ok { color: var(--success); font-weight: 600; }
+.hint.bad { color: var(--danger); font-weight: 600; }
+@media (prefers-reduced-motion: reduce) { .saved { transition: none; } }

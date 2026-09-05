@@ -73,7 +73,7 @@ def test_nothing_to_send_alerts_instead_of_firing(world):
     s = world.db.get_state(world.user_id)
     assert s.state == "reminding" and s.fire_pending
     assert not any(m["to"] == "them@example.com" for m in world.mailer.sent)
-    assert len([m for m in world.mailer.sent if "ALERT" in m["subject"]]) == 2
+    assert len([m for m in world.mailer.sent if "nothing to send" in m["subject"]]) == 2
 
     world.archive.mkdir(parents=True, exist_ok=True)
     (world.archive / "a.gpg").write_bytes(b"a")

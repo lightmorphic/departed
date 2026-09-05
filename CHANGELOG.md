@@ -2,6 +2,13 @@
 
 All notable changes to Departed are recorded here.
 
+## [0.5.0] — 2026-09-05
+
+- **Every email is designed now.** They go out as plain words and as a small, quiet page alongside, with the check-in as a proper button and the address underneath for anyone whose mail reader will not show it. No images, no fonts, nothing loaded from anywhere, and a test that fails if one ever gains an outside address.
+- The one that reaches your person was written with more care than the rest. Your letter sits at the top in its own block, then a short plain explanation of what happened, then how to open the file.
+- **A mail test on the settings page.** One button sends a short message to you and nothing else, so you can prove the mail server works before trusting anything to it. When it fails it says so in English: nothing answered at that server and port, or the server did not accept that username and password, rather than an error number.
+- **The settings save themselves.** No save button. Each box saves when you finish with it and a small tick appears beside its label for a moment.
+
 ## [0.4.8] — 2026-09-05
 
 - The web address setting explains itself and fills itself in. It now says why it exists at all: the app only ever sees requests arriving on its own machine, so the address you reach it on is the one thing it cannot work out. The box arrives filled with the address your browser is using, there is a button to put it back, and it shows what a check-in link built from it will look like.
