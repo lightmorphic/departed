@@ -2,6 +2,10 @@
 
 All notable changes to Departed are recorded here.
 
+## [0.4.3] — 2026-09-05
+
+- The compose file is nine lines with no commentary. Anyone installing it can read a port mapping and a volume without being told what they are.
+
 ## [0.4.2] — 2026-09-05
 
 - The `.env` file is gone. The port and the folder sit in the compose file itself, which is now the whole of the server-side setup: one file, twelve lines, nothing secret in it and nothing to fill in.

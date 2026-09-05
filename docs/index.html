@@ -313,13 +313,7 @@ sudo chown -R 1000:1000 /opt/departed</code></pre>
       <li class="reveal">
         <h3>Save this as <code>/opt/departed/docker-compose.yml</code></h3>
         <p>That is the whole of the server side. There is no settings file to fill in, and nothing secret in it. Notice what is missing: no email addresses, no mail server, no passwords.</p>
-<pre><code># The whole of the server-side setup. Everything else, including your email
-# addresses, your mail server and your files, is set in the app itself.
-#
-#   4160        the port you open in a browser. Change it if it is taken.
-#   /opt/departed   the folder holding the database, your files and the log.
-#                   Back that folder up and you have everything.
-services:
+<pre><code>services:
   departed:
     image: ghcr.io/lightmorphic/departed:latest
     container_name: departed
