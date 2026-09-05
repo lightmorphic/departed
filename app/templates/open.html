@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block title %}Open a sealed archive - Departed{% endblock %}
+{% block content %}
+<div class="doc-page">
+  <h1 class="title">Open a sealed archive</h1>
+  <p class="lede">Somebody left you a file and a passphrase. Put both in below and you will get what is inside.</p>
+
+  <section class="panel">
+    <p class="hint">This happens entirely in your browser. The file is not uploaded, the passphrase is not sent, and nothing here is recorded. You can turn off your internet connection first if you would rather, and it will still work.</p>
+
+    <label class="field" for="sealed-file">The file</label>
+    <input id="sealed-file" type="file" accept=".enc,application/octet-stream">
+
+    <label class="field" for="sealed-pass">The passphrase</label>
+    <input id="sealed-pass" type="password" autocomplete="off" spellcheck="false">
+
+    <div class="actions"><button class="btn primary" type="button" id="open-it">Open it</button></div>
+    <div id="open-result"></div>
+  </section>
+
+  <section class="panel">
+    <h2 class="panel-h">If you would rather not use this page</h2>
+    <p>The file is an ordinary encrypted file, made the way OpenSSL makes them. Any computer with OpenSSL on it, which is most Macs and every Linux machine, will open it with one command. You do not need this program or this page at all.</p>
+    <pre><code>openssl enc -d -aes-256-cbc -pbkdf2 -iter 600000 -md sha256 \
+  -in departed-sealed.enc -out inside.zip</code></pre>
+    <p>It will ask for the passphrase. What comes out is a normal zip file that any computer can open.</p>
+  </section>
+</div>
+<script src="{{ url_for('static', filename='js/seal.js') }}?v={{ app_version }}"></script>
+<script src="{{ url_for('static', filename='js/open.js') }}?v={{ app_version }}"></script>
+{% endblock %}

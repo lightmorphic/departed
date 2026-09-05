@@ -8,7 +8,7 @@ A dead man's switch. A small self-hosted service that emails an archive you lock
 - Ignore it and it sends the same link once a day for 10 more days.
 - Still nothing, and it emails your files to the person you chose, about 21 days after your last check-in. Once. Then it stops.
 
-You encrypt the files yourself, outside the app, and add them on the settings page. The app never sees the passphrase, never encrypts and never decrypts. It attaches the files as they are. A stolen server or a read email yields only an encrypted blob.
+The files are locked before the app ever has them. You can do that with your own tool, or let the settings page do it: the locking happens in your own browser, the passphrase is made there and shown to you once, and only the sealed result reaches the server. Either way the app never has the passphrase, never encrypts and never decrypts. A stolen server or a read email yields only an encrypted blob.
 
 Several people can share one copy. Each has their own account, their own settings, their own files and their own timer, and nobody can see anybody else's.
 
@@ -50,9 +50,34 @@ Signed in, you set:
 - The timing: days between check-ins, how many reminders, and days between them. Fractions are allowed, so `0.01` is about a quarter of an hour, which is handy for testing.
 - The web address you open it at. Your check-in links are built from this, so it has to work from wherever you read your email.
 - Your timezone.
-- **Your files.** Upload them, see them listed, remove them. One file is attached as it is; several are zipped, uncompressed. Lock them yourself before you add them.
+- **Your files.** Either let the page seal them in your browser, or upload something you encrypted yourself. Sealed or not, the app only ever attaches what it was given.
 - **Your letter.** A few words that go in the body of the email carrying your files. It is stored encrypted at rest but the app can read it, unlike your files, so keep anything private inside the locked files instead.
 - Your own sign-in password.
+
+### Sealing files in your browser
+
+Choose your files on the settings page and press **Seal and save**. What happens next happens entirely in your browser:
+
+1. The files are zipped locally.
+2. A passphrase is generated with your browser's own random number source, or you type one of your own.
+3. The zip is encrypted with AES-256-CBC, using a key stretched from the passphrase with 600,000 rounds of PBKDF2-SHA256.
+4. Only the sealed result is uploaded. The passphrase is never sent, never stored and never logged.
+
+You are shown the passphrase once. Write it down. Nothing can tell you what it was afterwards, not this program and not anybody running it.
+
+To change what is inside, press **Change what is inside** and give the passphrase. The browser fetches the sealed file, opens it locally, lets you add and remove things, and seals it again. **Check I can still open it** does the same without changing anything, which is worth doing occasionally.
+
+**The honest caveat.** The page doing this work is served by your own server. If somebody took over that server they could change the page to steal the passphrase as you typed it. That is true of every web page that does encryption. If you want no such doubt, encrypt the files with your own tool on your own machine and upload the result instead. Both routes are supported, and the second one is why the first is optional.
+
+### Opening a sealed archive
+
+The recipient does not need this program. The sealed file is an ordinary OpenSSL container holding an ordinary zip:
+
+```bash
+openssl enc -d -aes-256-cbc -pbkdf2 -iter 600000 -md sha256 -in departed-sealed.enc -out inside.zip
+```
+
+There is also a page at `/open`, and the same page on the website, which does it in the browser without uploading anything. The email that carries the archive tells the recipient both ways.
 
 ### Accounts
 
