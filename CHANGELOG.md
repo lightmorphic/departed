@@ -2,6 +2,12 @@
 
 All notable changes to Departed are recorded here.
 
+## [0.6.0] — 2026-09-06
+
+- **Up to three people can receive your files.** One address was one point of failure: if the only person who has it is in the same car as you, or dies first and their family cannot get into their email, nothing arrives. Now you can name a second and a third.
+- Each of them gets their own copy, sent separately, so none of them sees that the others were written to. Each needs the passphrase, so give it to each of them yourself.
+- If one address fails, the others still go, and the ones that worked are never sent to twice. It keeps retrying only the ones that did not, and only calls itself done when every one of them has been delivered.
+
 ## [0.5.0] — 2026-09-05
 
 - **Every email is designed now.** They go out as plain words and as a small, quiet page alongside, with the check-in as a proper button and the address underneath for anyone whose mail reader will not show it. No images, no fonts, nothing loaded from anywhere, and a test that fails if one ever gains an outside address.

@@ -180,3 +180,71 @@ def test_the_timing_can_be_minutes_for_testing(world, files):
     subjects = [m["subject"] for m in world.mailer.sent]
     assert "Departed: please check in" in subjects
     assert "Departed: reminder 1 of 1 - please check in" in subjects
+
+
+def test_up_to_three_people_each_get_their_own_copy(world, files):
+    (files / "a.gpg").write_bytes(b"a")
+    world.switches.store(world.user_id).set_many({
+        "recipient_email": "sam@example.com",
+        "recipient_email_2": "jo@example.com",
+        "recipient_email_3": "pat@example.com",
+    })
+    run_days(world, 15)
+
+    sent = [m for m in world.mailer.sent if m["attachment"]]
+    assert sorted(m["to"] for m in sent) == ["jo@example.com", "pat@example.com", "sam@example.com"]
+    # separately, so none of them sees the others
+    for m in sent:
+        assert "," not in m["to"]
+        assert "jo@example.com" not in m["body"] or m["to"] == "jo@example.com"
+    assert world.db.get_state(world.user_id).state == "fired"
+
+    # and it does not go round again
+    before = len(world.mailer.sent)
+    run_days(world, 20)
+    assert len(world.mailer.sent) == before
+
+
+def test_a_bad_address_does_not_stop_the_others_or_get_a_second_copy(world, files):
+    """One address failing must not hold up the rest, and the ones that worked
+    must not be sent to twice when it retries."""
+    (files / "a.gpg").write_bytes(b"a")
+    store = world.switches.store(world.user_id)
+    store.set_many({"recipient_email": "sam@example.com", "recipient_email_2": "broken@example.com"})
+
+    world.mailer.bounce = {"broken@example.com"}
+    run_days(world, 15)
+    s = world.db.get_state(world.user_id)
+    assert s.state != "fired" and s.fire_pending
+    assert s.fired_to == "sam@example.com"
+    assert len([m for m in world.mailer.sent if m["to"] == "sam@example.com" and m["attachment"]]) == 1
+
+    run_days(world, 2)  # keeps retrying, and sam is not written to again
+    assert len([m for m in world.mailer.sent if m["to"] == "sam@example.com" and m["attachment"]]) == 1
+
+    world.mailer.bounce = set()
+    world.clock.advance(minutes=6)
+    world.tick()
+    s = world.db.get_state(world.user_id)
+    assert s.state == "fired"
+    assert len([m for m in world.mailer.sent if m["to"] == "broken@example.com"]) == 1
+
+
+def test_checking_in_clears_who_has_had_it(world, files):
+    (files / "a.gpg").write_bytes(b"a")
+    world.switches.store(world.user_id).set("recipient_email_2", "jo@example.com")
+    run_days(world, 15)
+    assert world.db.get_state(world.user_id).fired_to
+    world.engine.checkin_now()
+    assert world.db.get_state(world.user_id).fired_to is None
+
+
+def test_blank_and_repeated_addresses_are_ignored(world):
+    store = world.switches.store(world.user_id)
+    store.set_many({"recipient_email": "sam@example.com", "recipient_email_2": "  ",
+                    "recipient_email_3": "SAM@example.com"})
+    assert store.current().recipients == ["sam@example.com"]
+    store.set_many({"recipient_email": "", "recipient_email_2": "", "recipient_email_3": ""})
+    cfg = store.current()
+    assert cfg.recipients == []
+    assert any("nobody to send" in p for p in cfg.problems)

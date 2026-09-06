@@ -24,6 +24,7 @@ class FakeMailer:
 
     sent = []
     fail = False
+    bounce = set()      # addresses that always refuse
 
     def __init__(self, settings=None):
         self._settings = settings
@@ -31,6 +32,8 @@ class FakeMailer:
     def send(self, to, subject, body, attachment=None, html=None):
         if FakeMailer.fail:
             raise ConnectionError("smtp down")
+        if to in FakeMailer.bounce:
+            raise ConnectionError("that address bounced")
         FakeMailer.sent.append({"to": to, "subject": subject, "body": body,
                                 "attachment": attachment, "html": html})
 
@@ -38,6 +41,7 @@ class FakeMailer:
     def reset(cls):
         cls.sent = []
         cls.fail = False
+        cls.bounce = set()
 
     @classmethod
     def last(cls):

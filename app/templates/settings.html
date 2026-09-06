@@ -22,9 +22,17 @@
     <input id="owner_email" name="owner_email" type="email" value="{{ cfg.owner_email }}" autocomplete="email">
     <p class="hint">Where the check-in emails go.</p>
 
-    <label class="field" for="recipient_email">Your person's email address</label>
-    <input id="recipient_email" name="recipient_email" type="email" value="{{ cfg.recipient_email }}">
-    <p class="hint">The one person who receives your files if you stop answering. They already have the passphrase, because you gave it to them yourself.</p>
+    <label class="field" for="recipient_email">Who receives your files</label>
+    <input id="recipient_email" name="recipient_email" type="email" value="{{ cfg.recipient_email }}" placeholder="the person you trust">
+
+    <label class="field" for="recipient_email_2">And, if you like, a second</label>
+    <input id="recipient_email_2" name="recipient_email_2" type="email" value="{{ cfg.recipient_email_2 }}" placeholder="optional">
+
+    <label class="field" for="recipient_email_3">And a third</label>
+    <input id="recipient_email_3" name="recipient_email_3" type="email" value="{{ cfg.recipient_email_3 }}" placeholder="optional">
+
+    <p class="hint">Each of them gets their own copy, sent separately, and none of them sees that the others were written to. Every one needs the passphrase, so give it to each of them yourself.</p>
+    <p class="hint">Two or three is worth thinking about. If the only person who has it is in the same car as you, or dies before you and their family cannot get into their email, one address is one point of failure.</p>
   </section>
 
   <section class="panel" aria-labelledby="smtp-h">

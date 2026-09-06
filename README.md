@@ -46,7 +46,7 @@ Two optional environment lines exist if you ever want them. `MAX_UPLOAD_MB` (def
 
 Signed in, you set:
 
-- Your email address, and your person's.
+- Your email address, and up to three who receive your files.
 - Your mail server, port, encryption, username, password and from-address. The password is stored encrypted and never shown again.
 - **The timing**, all three parts of it: days between a check-in and the next asking, how many times it asks again, and the days between those. Nothing about the schedule is fixed in the code. The page adds your numbers up and tells you in words when your files would go. Fractions are allowed, so `0.01` is about a quarter of an hour, which is handy for testing.
 - **The web address you open it at.** This is the only thing the app cannot work out for itself: it sits behind whatever you put in front of it and only ever sees requests arriving on its own machine, so it never learns the name you reach it on. It builds the check-in links itself, as that address followed by `/checkin/` and a long single-use token. The box arrives filled in with the address your browser is using, and it warns you if that address would only work at home.
@@ -62,6 +62,12 @@ Everything on that page saves itself as you go, with a tick beside the box. Ther
 Every message goes out twice in the same envelope: as plain words for anything that shows plain text, and as a small designed page for everything else. They carry no images, no fonts and nothing loaded from anywhere, so nothing about them can report that you opened one. The check-in is a button with the plain address underneath it.
 
 The one that reaches your person is the one that matters. Your letter sits at the top in its own block, then a short explanation of what happened, then how to open the file.
+
+### Who receives your files
+
+Up to three people. Each gets their own copy, sent separately, so none of them sees that the others were written to, and each needs the passphrase from you.
+
+More than one is worth thinking about. One address is one point of failure: the person may be in the same car as you, or may die first, leaving their family unable to get into their email. If one address fails when the day comes, the others still go, the ones that worked are never sent to twice, and it keeps retrying the rest.
 
 ### Sealing files in your browser
 
