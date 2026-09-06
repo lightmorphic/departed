@@ -57,6 +57,12 @@ Signed in, you set:
 
 Everything on that page saves itself as you go, with a tick beside the box. There is no save button. There is a **Send myself a test** button beside the mail settings, which sends one short message to you and nothing else, so you can prove that part works before trusting anything to it.
 
+### One thing loaded from elsewhere
+
+The app's top bar carries the Lightmorphic app launcher, which is a script from `apps.lightmorphic.com`. It is the only thing in the whole app fetched from another address. Everything else, including all the sealing and opening, is served by your own machine.
+
+If you would rather it were not there, delete the two lines mentioning `all-apps` and `launcher.js` from `app/templates/layout.html` and rebuild. Nothing else depends on them.
+
 ### The emails
 
 Every message goes out twice in the same envelope: as plain words for anything that shows plain text, and as a small designed page for everything else. They carry no images, no fonts and nothing loaded from anywhere, so nothing about them can report that you opened one. The check-in is a button with the plain address underneath it.

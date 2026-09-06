@@ -215,3 +215,30 @@ def test_the_mail_test_reports_a_failure_plainly(world):
     world.mailer.fail = False
     world.switches.store(world.user_id).set("smtp_host", "")
     assert "Fill in" in world.client.post("/settings/test-mail").get_json()["error"]
+
+
+def test_the_top_bar_carries_the_launcher_and_stays_put(world):
+    page = world.client.get("/").get_data(as_text=True)
+    assert '<div id="all-apps"></div>' in page
+    assert 'apps.lightmorphic.com/launcher.js' in page
+    # last thing in the bar
+    bar = page[page.index('class="top-actions"'):page.index("</header>")]
+    assert bar.rindex('id="all-apps"') > bar.rindex('id="theme-toggle"')
+
+
+def test_nothing_else_in_the_app_reaches_outside(world):
+    """The launcher is the one exception, and it must stay the only one."""
+    import pathlib, re
+    root = pathlib.Path(__file__).resolve().parent.parent / "app"
+    allowed = {
+        "apps.lightmorphic.com/launcher.js",   # the app launcher, the one exception
+        "www.w3.org/2000/svg",                 # an XML namespace, not an address
+        "departed.example.com",                # a placeholder in a form
+    }
+    found = set()
+    for f in list(root.rglob("*.html")) + list(root.rglob("*.js")) + list(root.rglob("*.css")):
+        for url in re.findall(r'https?://[^\s"\')]+', f.read_text()):
+            host = url.split("://", 1)[1]
+            if not any(host.startswith(a) for a in allowed):
+                found.add(f"{f.name}: {url}")
+    assert not found, f"something new reaches outside: {found}"
