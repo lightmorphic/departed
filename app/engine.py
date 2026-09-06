@@ -107,6 +107,7 @@ class Engine:
         s.fire_attempts = 0
         s.last_fire_error = None
         s.last_alert_at = None
+        s.fired_to = None
         self.db.save_state(s)
         self._token_cache = None
         note = "Check-in received via " + via + "."
@@ -203,7 +204,8 @@ class Engine:
             s.fire_pending = True
             self.db.save_state(s)
             self.db.log_event(self.user_id, "fire-due", "No check-in received. The archive is due to be sent.", now)
-            log.warning("FIRING: no check-in received, sending the archive to %s", cfg.recipient_email)
+            log.warning("FIRING: no check-in received, sending the archive to %s",
+                        ", ".join(cfg.recipients))
 
         attachment = archive.build_attachment(cfg.archive_dir, now.astimezone(cfg.tz))
         if attachment is None:
@@ -222,18 +224,34 @@ class Engine:
             return
 
         name, data = attachment
+        already = [x for x in (s.fired_to or "").split(",") if x]
+        waiting = [who for who in cfg.recipients if who not in already]
         s.fire_attempts += 1
         s.last_fire_attempt_at = now
-        try:
-            text, html = emails.to_the_recipient(cfg, name, bool(cfg.sealed))
-            self.mailer.send(cfg.recipient_email, "Somebody has left you something",
-                             text, (name, data), html=html)
-        except Exception as e:  # noqa: BLE001
-            s.last_fire_error = str(e)
+        text, html = emails.to_the_recipient(cfg, name, bool(cfg.sealed))
+
+        failed = []
+        for who in waiting:
+            try:
+                self.mailer.send(who, "Somebody has left you something", text, (name, data), html=html)
+            except Exception as e:  # noqa: BLE001
+                failed.append((who, e))
+                log.error("FIRING FAILED for %s (attempt %d): %s - will retry in %s",
+                          who, s.fire_attempts, e, cfg.fire_retry_interval)
+                self.db.log_event(self.user_id, "error",
+                                  f"Sending to {who} failed (attempt {s.fire_attempts}): {e}. "
+                                  "Will keep retrying.", now)
+                continue
+            already.append(who)
+            s.fired_to = ",".join(already)
             self.db.save_state(s)
-            log.error("FIRING FAILED (attempt %d): %s - will retry in %s",
-                      s.fire_attempts, e, cfg.fire_retry_interval)
-            self.db.log_event(self.user_id, "error", f"Sending the archive failed (attempt {s.fire_attempts}): {e}. Will keep retrying.", now)
+            self.db.log_event(self.user_id, "fired",
+                              f"Archive '{name}' ({len(data)} bytes) emailed to {who}.", now)
+            log.warning("FIRED: archive '%s' sent to %s", name, who)
+
+        if failed:
+            s.last_fire_error = f"{failed[0][0]}: {failed[0][1]}"
+            self.db.save_state(s)
             return
 
         s.state = "fired"
@@ -242,8 +260,6 @@ class Engine:
         s.last_fire_error = None
         s.token_hash = None
         self.db.save_state(s)
-        self.db.log_event(self.user_id, "fired", f"Archive '{name}' ({len(data)} bytes) emailed to {cfg.recipient_email}.", now)
-        log.warning("FIRED: archive '%s' sent to %s after %d attempt(s)", name, cfg.recipient_email, s.fire_attempts)
         text, html = emails.it_fired(cfg, self.local(now))
         self._send_quietly(cfg.owner_email, "Departed: your files have been sent", text, html=html)
 

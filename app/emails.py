@@ -131,6 +131,12 @@ def _sign_off(base_url):
 
 # ---- the messages ---------------------------------------------------------
 
+def _and_list(names):
+    if len(names) <= 1:
+        return names[0] if names else "nobody"
+    return ", ".join(names[:-1]) + " and " + names[-1]
+
+
 def check_in(cfg, url, reminder_no, fire_when):
     """The email that asks whether you are still here."""
     if reminder_no:
@@ -141,15 +147,16 @@ def check_in(cfg, url, reminder_no, fire_when):
         heading = "Time to check in"
         opening = "One click and the clock goes back to the beginning."
 
+    who = _and_list(cfg.recipients)
     text = (f"{heading}\n\n{opening}\n\nClick this link:\n\n{url}\n\n"
-            f"If nobody clicks, your files go to {cfg.recipient_email} around "
+            f"If nobody clicks, your files go to {who} around "
             f"{fire_when}. Clicking stops that.\n")
 
     body = (_paragraph(_esc(opening))
             + _button("I am still here", url)
             + _fallback_link(url)
             + _note(f"If nobody clicks, your files go to "
-                    f"<strong style=\"color:{SOFT}\">{_esc(cfg.recipient_email)}</strong> "
+                    f"<strong style=\"color:{SOFT}\">{_esc(who)}</strong> "
                     f"around {_esc(fire_when)}. Clicking stops that."))
     return text + _footer_text(cfg), page(heading, body, _sign_off(cfg.base_url))
 
@@ -180,11 +187,12 @@ def nothing_to_send(cfg):
 
 def it_fired(cfg, when):
     heading = "Your files have been sent"
-    text = (f"{heading}\n\nThey went to {cfg.recipient_email} on {when}.\n\n"
+    who = _and_list(cfg.recipients)
+    text = (f"{heading}\n\nThey went to {who} on {when}.\n\n"
             "If this was a mistake, change the passphrase and check in on the dashboard "
             "to arm it again.\n")
     body = (_paragraph(f"They went to <strong style=\"color:{INK}\">"
-                       f"{_esc(cfg.recipient_email)}</strong> on {_esc(when)}. "
+                       f"{_esc(who)}</strong> on {_esc(when)}. "
                        "Nothing more will be sent.")
             + _note("If this was a mistake, change the passphrase on your files and check "
                     "in on the dashboard. That arms it again from the beginning.", tint=True))

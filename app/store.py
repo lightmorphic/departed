@@ -24,6 +24,8 @@ PBKDF_ROUNDS = 240_000
 FIELDS = [
     ("owner_email", False, ""),
     ("recipient_email", False, ""),
+    ("recipient_email_2", False, ""),
+    ("recipient_email_3", False, ""),
     ("smtp_host", False, ""),
     ("smtp_port", False, "587"),
     ("smtp_security", False, "starttls"),
@@ -118,8 +120,8 @@ class Settings:
         out = []
         if not self.owner_email:
             out.append("Your own email address is missing, so there is nobody to send check-ins to.")
-        if not self.recipient_email:
-            out.append("Your person's email address is missing, so there is nobody to send the archive to.")
+        if not self.recipients:
+            out.append("No address to send to, so there is nobody to send the archive to.")
         if not self.smtp_host:
             out.append("The mail server is missing, so nothing can be sent at all.")
         if not self.from_address:
@@ -128,6 +130,16 @@ class Settings:
             out.append("The web address is missing, so the check-in links cannot be built.")
         if self.smtp_security not in dict(SECURITY_CHOICES):
             out.append("The mail security setting is not one of the three choices.")
+        return out
+
+    @property
+    def recipients(self):
+        """Everyone who gets the files, in order, with blanks and repeats dropped."""
+        out = []
+        for name in ("recipient_email", "recipient_email_2", "recipient_email_3"):
+            who = (getattr(self, name) or "").strip()
+            if who and who.lower() not in [x.lower() for x in out]:
+                out.append(who)
         return out
 
     @property

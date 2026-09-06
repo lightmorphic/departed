@@ -2,7 +2,7 @@
 {% set nav = 'home' %}
 {% block content %}
 <h1 class="title">Your switch</h1>
-<p class="lede">Every {{ interval_days|round(2)|string|replace('.0','') }} days you get a check-in email. Click it and the clock resets. Ignore it and, after {{ cfg.reminder_count }} daily reminders, your files go to <strong>{{ cfg.recipient_email or 'nobody yet' }}</strong>.</p>
+<p class="lede">Every {{ interval_days|round(2)|string|replace('.0','') }} days you get a check-in email. Click it and the clock resets. Ignore it and, after {{ cfg.reminder_count }} daily reminders, your files go to <strong>{% if cfg.recipients %}{{ cfg.recipients|join(', ') }}{% else %}nobody yet{% endif %}</strong>.</p>
 
 {% if cfg.problems %}
 <section class="panel notice warning" aria-labelledby="cfg-h">

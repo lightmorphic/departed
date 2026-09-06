@@ -37,7 +37,8 @@ CREATE TABLE IF NOT EXISTS state (
   fired_at TEXT,
   last_alert_at TEXT,
   last_test_at TEXT,
-  last_test_result TEXT
+  last_test_result TEXT,
+  fired_to TEXT
 );
 CREATE TABLE IF NOT EXISTS events (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -98,6 +99,16 @@ class Database:
         self._now = now
         with self._conn() as c:
             c.executescript(SCHEMA)
+            self._add_missing_columns(c)
+
+    @staticmethod
+    def _add_missing_columns(c):
+        """Older databases pre-date some columns. Add them rather than asking
+        anybody to start again."""
+        have = {row["name"] for row in c.execute("PRAGMA table_info(state)")}
+        for name, kind in (("fired_to", "TEXT"),):
+            if name not in have:
+                c.execute(f"ALTER TABLE state ADD COLUMN {name} {kind}")
 
     def _conn(self):
         c = sqlite3.connect(self.path, timeout=30)
