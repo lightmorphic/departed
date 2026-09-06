@@ -223,7 +223,7 @@ def test_the_top_bar_carries_the_launcher_and_stays_put(world):
     assert 'apps.lightmorphic.com/launcher.js' in page
     # last thing in the bar
     bar = page[page.index('class="top-actions"'):page.index("</header>")]
-    assert bar.rindex('id="all-apps"') > bar.rindex('id="theme-toggle"')
+    assert bar.rindex('id="all-apps"') > bar.rindex("Sign out")
 
 
 def test_nothing_else_in_the_app_reaches_outside(world):
@@ -242,3 +242,18 @@ def test_nothing_else_in_the_app_reaches_outside(world):
             if not any(host.startswith(a) for a in allowed):
                 found.add(f"{f.name}: {url}")
     assert not found, f"something new reaches outside: {found}"
+
+
+
+def test_there_is_no_light_mode_left(world):
+    """One palette, dark, with nothing to switch and nothing remembered."""
+    import pathlib
+    root = pathlib.Path(__file__).resolve().parent.parent
+    for f in list((root / "app").rglob("*.html")) + list((root / "app" / "static" / "css").rglob("*.css")):
+        text = f.read_text()
+        for gone in ("data-theme", "prefers-color-scheme", "theme-toggle", "localStorage"):
+            assert gone not in text, f"{f.name} still mentions {gone}"
+    page = world.client.get("/").get_data(as_text=True)
+    assert "theme" not in page.lower()
+    css = (root / "app" / "static" / "css" / "main.css").read_text()
+    assert "color-scheme: dark" in css

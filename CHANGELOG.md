@@ -2,6 +2,12 @@
 
 All notable changes to Departed are recorded here.
 
+## [0.7.0] — 2026-09-06
+
+- **Dark, always.** The light palette is gone from the app and from the website, along with the switch in the top bar, the setting it remembered in your browser, and every trace of both in the code. One palette, and it no longer changes with what your computer prefers.
+- The legal sub-footer now puts the company details on the left and the five page links on the right, on the same line, dropping to two rows on a phone.
+- The terms page has its own address, `terms@lightmorphic.com`. No email address appears anywhere on the site but the legal pages.
+
 ## [0.6.1] — 2026-09-06
 
 - The top bar stays put as you scroll, rather than disappearing off the top of a long settings page.

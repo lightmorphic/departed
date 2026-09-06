@@ -9,6 +9,7 @@
 
 /* ── Tokens ──────────────────────────────────────────────────────
    Dusk is the default. Light preference gets the same scene at dawn. */
+/* One palette. Dark, always. */
 :root {
   color-scheme: dark;
   --bg: #05070c;
@@ -42,54 +43,15 @@
   --mist-o: .09;
   --mote: #ffe9b0;
   --env: #171b28;
+  --env-line: rgba(255, 255, 255, .16);
   --house: #05070c;
   --house-dark: #020306;
-  --env-line: rgba(255, 255, 255, .16);
   --scrim: linear-gradient(97deg, rgba(6,10,20,.94) 0%, rgba(6,10,20,.82) 30%, rgba(6,10,20,.34) 58%, rgba(6,10,20,0) 78%);
   --scrim-foot: linear-gradient(180deg, rgba(5,7,12,0) 76%, var(--bg) 100%);
 
   --radius: .875rem;
   --panel-radius: 1.375rem;
   --ease: cubic-bezier(.22, .61, .36, 1);
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color-scheme: light;
-    --bg: #f7f4ef;
-    --bg-deep: #f2ede6;
-    --fg: #14161d;
-    --fg-soft: #3f4552;
-    --muted-fg: #5c6270;
-    --panel: #ffffff;
-    --panel-border: rgba(24, 24, 40, .12);
-    --rule: rgba(24, 24, 40, .12);
-    --accent-text: #8a6702;
-    --on-accent: #4a3a04;
-
-    --sky-1: #a8bcd8;
-    --sky-2: #c9d3e2;
-    --sky-3: #f0dfd0;
-    --sky-4: #f9e2bd;
-    --glow-1: #ffd9a0;
-    --glow-2: #f0b48a;
-    --glow-o1: .55;
-    --glow-o2: .3;
-    --hill-far: #98a4bb;
-    --hill-mid: #6f7d96;
-    --hill-near: #4a5468;
-    --ground-far: #a8b4c8;
-    --ground-near: #7d8ba3;
-    --mist: #ffffff;
-    --mist-o: .38;
-    --mote: #ffffff;
-    --env: #ffffff;
-    --house: #3b4356;
-    --house-dark: #2b3243;
-    --env-line: rgba(24, 24, 40, .22);
-    --scrim: linear-gradient(97deg, rgba(247,244,239,.94) 0%, rgba(247,244,239,.82) 30%, rgba(247,244,239,.32) 58%, rgba(247,244,239,0) 78%);
-    --scrim-foot: linear-gradient(180deg, rgba(247,244,239,0) 76%, var(--bg) 100%);
-  }
 }
 
 * { box-sizing: border-box; }
@@ -259,17 +221,11 @@ a { color: inherit; }
 .btn.ghost { border-color: var(--rule); color: var(--fg); }
 .btn.ghost:hover { border-color: var(--fg-soft); }
 
-  35%, 65% { opacity: 1; }
-  100%     { transform: translateY(3.6rem); opacity: 0; }
-}
 /* On a narrow screen the copy fills the width, so the scrim falls from the top
    instead of the side and the horizon stays visible underneath. */
 @media (max-width: 52rem) {
   :root {
     --scrim: linear-gradient(180deg, rgba(6,10,20,.9) 0%, rgba(6,10,20,.78) 40%, rgba(6,10,20,.2) 74%, rgba(6,10,20,0) 90%);
-  }
-  @media (prefers-color-scheme: light) {
-    :root { --scrim: linear-gradient(180deg, rgba(247,244,239,.9) 0%, rgba(247,244,239,.78) 40%, rgba(247,244,239,.2) 74%, rgba(247,244,239,0) 90%); }
   }
   .hero h1 br { display: none; }
 }
@@ -462,8 +418,15 @@ section { padding-inline: clamp(1.25rem, 4vw, 3rem); }
   padding: 1.75rem clamp(1.25rem, 4vw, 3rem) 2.5rem;
   max-width: 64rem; margin-inline: auto;
   color: var(--muted-fg); font-size: .8125rem; line-height: 1.7;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 1rem 2rem; flex-wrap: wrap;
 }
-.subfoot .legal-nav { margin-top: .875rem; display: flex; flex-wrap: wrap; gap: .375rem 1.5rem; }
+.subfoot .legal-who { margin: 0; }
+.subfoot .legal-nav { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; justify-content: flex-end; }
+@media (max-width: 46rem) {
+  .subfoot { display: block; }
+  .subfoot .legal-nav { margin-top: 1rem; justify-content: flex-start; }
+}
 .subfoot a { display: inline-block; padding: .3125rem 0; color: var(--fg-soft); text-decoration-color: var(--rule); text-underline-offset: 3px; }
 .subfoot a:hover { color: var(--fg); text-decoration-color: var(--accent); }
 
@@ -519,11 +482,6 @@ section { padding-inline: clamp(1.25rem, 4vw, 3rem); }
 .opener .files li span:first-child { flex: 1; min-width: 10rem; overflow-wrap: anywhere; }
 .opener .files .hint { font-size: .8125rem; color: var(--muted-fg); }
 .opener .btn.small { min-height: 2.25rem; padding: .375rem 1rem; font-size: .875rem; }
-@media (prefers-color-scheme: light) {
-  .opener .tint.success { background: #eaf5ea; color: #2e6b30; }
-  .opener .tint.warning { background: #fff6e0; color: #7a5c02; }
-  .opener .tint.danger { background: #fdecea; color: #a82c23; }
-}
 .app .aside { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); color: var(--fg-soft); font-size: .9375rem; }
 .app .aside a { color: var(--fg); text-underline-offset: 3px; text-decoration-color: var(--accent); }
 .yours { max-width: 40rem; margin-top: clamp(2.5rem, 6vh, 3.5rem); padding-top: clamp(2rem, 4vh, 2.5rem); border-top: 1px solid var(--rule); }
