@@ -490,3 +490,20 @@ section { padding-inline: clamp(1.25rem, 4vw, 3rem); }
 .yours { max-width: 40rem; margin-top: clamp(2.5rem, 6vh, 3.5rem); padding-top: clamp(2rem, 4vh, 2.5rem); border-top: 1px solid var(--rule); }
 .yours h3 { font-size: 1.1875rem; font-weight: 600; letter-spacing: -.018em; }
 .yours p { margin-top: 1rem; color: var(--fg-soft); }
+
+/* ── The source-code sub-footer ─────────────────────────────────── */
+.subfoot.code { padding-bottom: 1.75rem; align-items: center; }
+.subfoot .marks { display: flex; align-items: center; gap: .875rem; }
+.subfoot .marks a {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.25rem; height: 2.25rem; margin-left: -.5rem;
+  color: var(--muted-fg); border-radius: var(--radius);
+}
+.subfoot .marks a:first-child { margin-left: -.5rem; }
+.subfoot .marks a:hover { color: var(--fg); }
+.subfoot .code-nav { margin-left: auto; display: flex; flex-wrap: wrap; gap: .25rem 1.75rem; justify-content: flex-end; }
+@media (max-width: 46rem) {
+  .subfoot.code { display: block; }
+  .subfoot .code-nav { margin: .875rem 0 0; justify-content: flex-start; }
+  .subfoot .marks a { margin-left: -.5rem; }
+}

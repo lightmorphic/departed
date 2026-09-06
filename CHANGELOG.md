@@ -2,6 +2,11 @@
 
 All notable changes to Departed are recorded here.
 
+## [0.7.2] — 2026-09-06
+
+- A second band in the footer for the source code: the GitHub and open source marks on the left, and links to the repository, the documentation, the security policy, the licence, the changelog, the issues and the releases on the right.
+- A `SECURITY.md`, so that link goes somewhere real. It says how to report something privately, what is in scope, what is not, and what to expect back.
+
 ## [0.7.1] — 2026-09-06
 
 - The legal sub-footer laid out to match the house standard: links level with the middle of the company block, no underlines until you hover, the company number picked out in the accent.
