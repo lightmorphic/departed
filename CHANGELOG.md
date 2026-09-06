@@ -2,6 +2,11 @@
 
 All notable changes to Departed are recorded here.
 
+## [0.6.1] — 2026-09-06
+
+- The top bar stays put as you scroll, rather than disappearing off the top of a long settings page.
+- The Lightmorphic app launcher sits at the right-hand end of it. It is the one thing in the app loaded from another address, `apps.lightmorphic.com`.
+
 ## [0.6.0] — 2026-09-06
 
 - **Up to three people can receive your files.** One address was one point of failure: if the only person who has it is in the same car as you, or dies first and their family cannot get into their email, nothing arrives. Now you can name a second and a third.
