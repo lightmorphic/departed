@@ -2,6 +2,10 @@
 
 All notable changes to Departed are recorded here.
 
+## [0.7.1] — 2026-09-06
+
+- The legal sub-footer laid out to match the house standard: links level with the middle of the company block, no underlines until you hover, the company number picked out in the accent.
+
 ## [0.7.0] — 2026-09-06
 
 - **Dark, always.** The light palette is gone from the app and from the website, along with the switch in the top bar, the setting it remembered in your browser, and every trace of both in the code. One palette, and it no longer changes with what your computer prefers.
