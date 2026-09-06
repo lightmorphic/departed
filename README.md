@@ -14,10 +14,7 @@ The files are locked before the app ever has them. You can do that with your own
 
 Several people can share one copy. Each has their own account, their own settings, their own files and their own timer, and nobody can see anybody else's.
 
-<picture>
-  <source srcset="docs/images/app-dark.png" media="(prefers-color-scheme: dark)">
-  <img src="docs/images/app-light.png" alt="The Departed dashboard, showing the switch waiting, the dates of the next check-in and the firing, and the files that would be sent." width="900">
-</picture>
+<img src="docs/images/app.png" alt="The Departed dashboard, showing the switch waiting, the dates of the next check-in and the firing, and the files that would be sent." width="900">
 
 ## Run it
 
@@ -56,6 +53,10 @@ Signed in, you set:
 - Your own sign-in password.
 
 Everything on that page saves itself as you go, with a tick beside the box. There is no save button. There is a **Send myself a test** button beside the mail settings, which sends one short message to you and nothing else, so you can prove that part works before trusting anything to it.
+
+### Dark, always
+
+There is one palette and no switch. The app and the website ignore whatever your computer prefers and stay dark.
 
 ### One thing loaded from elsewhere
 
