@@ -418,14 +418,17 @@ section { padding-inline: clamp(1.25rem, 4vw, 3rem); }
   padding: 1.75rem clamp(1.25rem, 4vw, 3rem) 2.5rem;
   max-width: 64rem; margin-inline: auto;
   color: var(--muted-fg); font-size: .8125rem; line-height: 1.7;
-  display: flex; align-items: flex-end; justify-content: space-between;
-  gap: 1rem 2rem; flex-wrap: wrap;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem 2.5rem; flex-wrap: wrap;
 }
 .subfoot .legal-who { margin: 0; }
-.subfoot .legal-nav { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; justify-content: flex-end; }
+.subfoot .legal-number { color: var(--accent); }
+.subfoot .legal-nav { margin-left: auto; display: flex; flex-wrap: wrap; gap: .25rem 1.75rem; justify-content: flex-end; }
+.subfoot a { text-decoration: none; }
+.subfoot a:hover { color: var(--fg); text-decoration: underline; text-decoration-color: var(--accent); }
 @media (max-width: 46rem) {
   .subfoot { display: block; }
-  .subfoot .legal-nav { margin-top: 1rem; justify-content: flex-start; }
+  .subfoot .legal-nav { margin: 1rem 0 0; justify-content: flex-start; }
 }
 .subfoot a { display: inline-block; padding: .3125rem 0; color: var(--fg-soft); text-decoration-color: var(--rule); text-underline-offset: 3px; }
 .subfoot a:hover { color: var(--fg); text-decoration-color: var(--accent); }
